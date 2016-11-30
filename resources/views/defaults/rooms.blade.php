@@ -42,7 +42,7 @@
             <div class="items-list">
                 <div class="inner">
                     <div class="filter">
-                        <form class="main-search" role="form" method="get" action="?">
+                        <form id="_frm_searchFeature" class="main-search" role="form" method="get" action="?">
                             {{-- csrf_field() --}}
                             <div class="row">
                                 <div class="col-md-6">
@@ -79,7 +79,9 @@
                                                     echo "<optgroup label='{$label}'>";
                                                     $optgroup = $d->types;
                                                 }
-                                                echo "<option value='{$d->id}' >{$d->name}</option>";
+                                        ?>
+                                                <option value='{{$d->id}}' {{ isset($dt_filter['type']) && in_array($d->id, $dt_filter['type']) ? 'selected' : '' }}>{{$d->name}}</option>
+                                        <?php
                                             }
                                             echo "</optgroup>";
                                         ?>
@@ -95,7 +97,7 @@
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default updown" counter="down" type="button"><i class="fa fa-minus"></i></button>
                                             </span>
-                                            <input type="number" class="form-control" id="bedrooms" name="bedrooms" placeholder="Any" min=0 max=16 value=0>
+                                            <input type="number" class="form-control" id="bedrooms" name="bedrooms" placeholder="Any" min=0 max=16 value={{ $dt_filter['bedrooms'] or 0 }}>
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default updown" counter="up" type="button"><i class="fa fa-plus"></i></button>
                                             </span>
@@ -111,7 +113,7 @@
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default updown" counter="down" type="button"><i class="fa fa-minus"></i></button>
                                             </span>
-                                            <input type="number" class="form-control" id="bathrooms" name="bathrooms" placeholder="Any" min=0 max=16 value=0>
+                                            <input type="number" class="form-control" id="bathrooms" name="bathrooms" placeholder="Any" min=0 max=16 value={{ $dt_filter['bathrooms'] or 0 }}>
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default updown" counter="up" type="button"><i class="fa fa-plus"></i></button>
                                             </span>
@@ -133,7 +135,7 @@
                                                         <span>{{ $k->name }}</span>
                                                     </div>
                                                     <div class="checkbox_input">
-                                                        <input type="checkbox" name="kind[]" value="{{ $k->id }}">
+                                                        <input type="checkbox" name="kind[]" value="{{ $k->id }}" {{ isset($dt_filter['kind']) && in_array( $k->id, $dt_filter['kind']) ? 'checked' : '' }}>
                                                     </div>
                                                 </label>
                                             </div>
@@ -147,8 +149,8 @@
                                         <label>Giá</label>
                                         <div class="ui-slider" id="price-slider" data-value-min="50000" data-value-max="25000000" data-value-type="price" data-currency=" đ" data-currency-placement="after">
                                             <div class="values clearfix">
-                                                <input class="value-min" name="price-min" readonly>
-                                                <input class="value-max" name="price-max" readonly>
+                                                <input class="value-min" name="price-min" readonly value="{{ isset($dt_filter['price-min']) ? str_replace(['.', 'đ'], '', $dt_filter['price-min']) : 50000 }}">
+                                                <input class="value-max" name="price-max" readonly value="{{ isset($dt_filter['price-max']) ? str_replace(['.', 'đ'], '', $dt_filter['price-max']) : 25000000 }}">
                                             </div>
                                             <div class="element"></div>
                                         </div>
@@ -215,7 +217,7 @@
                                         <i><img src="/assets/icons/real-estate/apartment-3.png" alt=""></i>
                                         <span>Apartment</span>
                                     </div>
-                                    <div class="rating" data-rating="4"></div>
+                                    <!--div class="rating" data-rating="4"></div-->
                                 </div>
                             </div>
                         </div>
@@ -242,7 +244,7 @@
                                         <i><img src="/assets/icons/real-estate/apartment-3.png" alt=""></i>
                                         <span>Apartment</span>
                                     </div>
-                                    <div class="rating" data-rating="4"></div>
+                                    <!--div class="rating" data-rating="4"></div-->
                                 </div>
                             </div>
                         </div>
@@ -266,7 +268,7 @@
                                         <i><img src="/assets/icons/real-estate/apartment-3.png" alt=""></i>
                                         <span>Apartment</span>
                                     </div>
-                                    <div class="rating" data-rating="5"></div>
+                                    <!--div class="rating" data-rating="4"></div-->
                                 </div>
                             </div>
                         </div>
@@ -290,7 +292,7 @@
                                         <i><img src="/assets/icons/real-estate/apartment-3.png" alt=""></i>
                                         <span>Apartment</span>
                                     </div>
-                                    <div class="rating" data-rating="4"></div>
+                                    <!--div class="rating" data-rating="4"></div-->
                                 </div>
                             </div>
                         </div>
@@ -316,20 +318,49 @@
 
 @push('js-script')
 <script>
-    var _latitude = {{ $center->latitude }};
-    var _longitude = {{ $center->longitude }};
-    var jsonPath = "{{ route('client.marker') }}";
+    var _latitude = {{ isset($center->latitude) ? $center->latitude : (isset($location_lat) && $location_lat != '' ? $location_lat : 16.0544068) }};
+    var _longitude = {{ isset($center->longitude) ? $center->longitude : (isset($location_lng) && $location_lng != '' ? $location_lng : 108.20216670000002) }};
+    var jsonPath = "{{ route('client.room') }}";
+    var exec_filter = localStorage.getItem('filter');
 
+    $.get("/assets/external/_infobox.js", function() {
+        @if(isset($dt_filter))
+            var rsl =resultsJSON(exec_filter);
+        @else
+            var rsl =resultsJSON();
+        @endif
+        var json = jQuery.parseJSON(rsl)
+        createHomepageGoogleMap(_latitude,_longitude,json);
+    });
+
+    /* Filter form data using ajax */
+    $('#_frm_searchFeature').submit(function (e) {
+        var latitude = $('#latitude').val();
+        var longitude = $('#longitude').val();
+        var $form = $(this).serialize();
+        var $data = $(this).serializeArray();
+        localStorage.setItem('filter', JSON.stringify($data));
+        var _rediect_filter = '?lat='+ latitude + '&lng=' + longitude +'&' + $form;
+        window.history.replaceState($form, "", _rediect_filter);
+        $.ajax({
+            type: 'POST',
+            url: _rediect_filter,
+            data: $data,
+            beforeSend: function() {
+                console.log('Dang xu ly ...');
+            },
+            success: function(data) {
+                createHomepageGoogleMap(_latitude != 0 ? _latitude : latitude,_longitude != 0 ? _longitude : longitude,data);
+            },
+            error: function(e) {
+                console.log(e)
+            }
+        });
+        e.preventDefault();
+    })
     // Load JSON data and create Google Maps
 
-    $.getJSON(jsonPath)
-            .done(function(json) {
-                createHomepageGoogleMap(_latitude,_longitude,json);
-            })
-            .fail(function( jqxhr, textStatus, error ) {
-                console.log(error);
-            })
-    ;
+    
 
     $(".updown").on("click", function() {
         var $button = $(this);

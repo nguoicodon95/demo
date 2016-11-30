@@ -20,22 +20,6 @@
 </style>
 @endpush
 
-@push('js-include')
-<script type="text/javascript" src="{{ asset('assets/js/bootstrap-datepicker.js') }}"></script>
-<script type="text/javascript" src="{{ asset('assets/js/moment-with-locales.min.js') }}"></script>
-@endpush
-
-@push('js-script')
-<script>
-    $(".input-daterange").datepicker({startDate: new Date()});
-    /* Setting background top */
-    $('.hero-image').css({
-        'background': 'url(/assets/img/background_top.jpg) no-repeat center center',
-        'height': '500px',
-    });
-</script>
-@endpush
-
 @section('container')
 <div id="page-canvas">
     <div id="page-content">
@@ -47,21 +31,24 @@
                     <div class="search-bar horizontal">
                         <div class="header-form-bottom hide-sm">
                             <div class="SearchForm">
-                                <form action="/" method="get">
+                                <form action="?" method="post" id="_frm_FastFilter">
+                                    {{ csrf_field() }}
                                     <div class="searchForm-input-wrapper pull-left">
                                         <div class="searchForm_location">
                                             <div class="input-location">
                                                 <label class="input-placeholder-group locationInput_label">
                                                     <span class="input-placeholder-label screen-reader-only">Bạn đến đâu?</span>
-                                                    <input class="LocationInput input-normal" name="location" id="location" type="text" placeholder="Bạn đến đâu?" autocomplete="off">
+                                                    <input class="LocationInput input-normal" name="location" id="location" type="text" placeholder="Nơi đến, thành phố, địa chỉ" autocomplete="off">
+                                                    <input type="hidden" id="latitude" name="latitude">
+                                                    <input type="hidden" id="longitude" name="longitude">
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="searchForm_dates input-daterange" data-date-format="dd.mm.yyyy">
+                                        <div class="searchForm_dates input-daterange" data-date-format="yyyy-mm-dd">
                                             <div class="dates_input">
                                                 <div class="input-date">
                                                     <label class="DateInput_label" for="startd_date">Thời gian đến</label>
-                                                    <input class="DateInput_input flatpickr" id="date-from" name="date-from" type="text" name="start_date" value="" placeholder="Thời gian đến" autocomplete="off" maxlength="10">
+                                                    <input class="DateInput_input flatpickr" id="date-from" name="check-in" type="text" name="start_date" value="" placeholder="Thời gian đến" autocomplete="off" maxlength="10">
                                                     <div class="DateInput_display-text DateInput__display-text--focused">Thời gian đến</div>
                                                 </div>
                                                 <div class="dateArrow">
@@ -71,7 +58,7 @@
                                             </div>
                                             <div class="input-date">
                                                 <label class="DateInput_label" for="startDate">Thời gian đi</label>
-                                                <input class="DateInput_input flatpickr" id="date-to" name="date-to" type="text" value="" placeholder="Thời gian đi" autocomplete="off" maxlength="10">
+                                                <input class="DateInput_input flatpickr" id="date-to" name="check-out" type="text" value="" placeholder="Thời gian đi" autocomplete="off" maxlength="10">
                                                 <div class="DateInput_display-text DateInput__display-text--focused">Thời gian đi</div>
                                             </div>
                                         </div>
@@ -182,15 +169,12 @@
                                         $info = true;
                                         break;
                                     
-                                    default:
-                                        $link = route('room.detail', $item['id']);
-                                        break;
                                 }
                             ?>
                             <div class="{{ !is_null($item['config']) ? $item['config']->width : 'col-md-3'  }} col-sm-4 col-xs-6">
                                 <div class="item {{ $class }}">
                                     <div class="image">
-                                        <a href="{{ $link }}" target="_blank">
+                                        <a href="{{ $link }}">
                                             <img src="{{ asset($item['image']) }}" alt="{{ $item['name'] }}" height="{{ $info == true ? '175' : '369' }}">
                                             @if(isset($info) && $info == false )
                                             <h3 class="local-name">{{ $item['name'] }}</h3>
@@ -199,7 +183,7 @@
                                     </div>
                                     @if(isset($info) && $info == true )
                                     <div class="wrapper">
-                                        <a href="">
+                                        <a href="{{ $link }}">
                                             <h3>{{ $item['name'] }}</h3>
                                         </a>
                                         <figure>{{ $item['place'] }}</figure>
@@ -238,4 +222,40 @@
         <!--end Partners-->
     </div>
 </div>
-@stop        
+@stop
+
+
+@push('js-include')
+<script type="text/javascript" src="{{ asset('assets/js/bootstrap-datepicker.js') }}"></script>
+<script type="text/javascript" src="{{ asset('assets/js/moment-with-locales.min.js') }}"></script>
+@endpush
+
+@push('js-script')
+<script>
+    $(".input-daterange").datepicker({startDate: new Date()});
+    /* Setting background top */
+    $('.hero-image').css({
+        'background': 'url(/assets/img/background_top.jpg) no-repeat center center',
+        'height': '500px',
+    });
+
+    var _latitude = 16.0544068;
+    var _longitude = 108.20216670000002;
+
+    autoComplete();
+
+$('#_frm_FastFilter').submit(function (e) {
+        var $form = $(this).serialize();
+        var $data = $(this).serializeArray();
+        var latitude = $('#latitude').val();
+        var longitude = $('#longitude').val();
+        var keyword = $('#location').val();
+        keyword = keyword.replace(/, /g, "--");
+        keyword = keyword.replace(/ /g, "-");
+        var _action_form = "{{ route('client.room') }}" + '/' + keyword + '?lat='+ latitude + '&lng=' + longitude +'&' + $form ;
+        localStorage.setItem('filter', JSON.stringify($data));
+        $(this).attr('action', _action_form);
+        window.location = _action_form;
+    });
+</script>
+@endpush

@@ -168,7 +168,7 @@ return [
          * Package Service Providers...
          */
 
-        //
+        Barryvdh\Elfinder\ElfinderServiceProvider::class,
 
         /*
          * Application Service Providers...

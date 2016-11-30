@@ -48,37 +48,122 @@ class ClientController extends BaseClientController
         $collection = collect([$rooms_items, $locations_items]);
         $this->data['items'] = $collection->collapse()->sortBy('position');
 
+        $this->data['show_form'] = false;
         return view('defaults.index', $this->data);
     }
 
-    public function room(Request $request, $location) {
-        $listings = $this->rooms->with('place_room', 'kind', 'photo_room', 'room_setting')->orderBy('id', 'desc')->get();
-        // dd($request->all());
-        if($type = $request->kind) {
-           $posts = Room::searchBy( 'amenities' ,$type);
-           dd($posts);
-        }
+    public function room(Request $request, $location = null) {
         $location = Location::where('slug', $location)->first();
-		$this->data['amenities'] = Amenities::ofType('rules')->get();
+        $this->data['amenities'] = Amenities::ofType('rules')->get();
 		$this->data['kind'] = Kind::all();
         $this->data['center'] = $location;
-        $this->data['listings'] = $listings;
+        $this->data['dt_filter'] = $request->all();
+        /* Request location find from client */
+        if($location) {
+            $this->data['location_request'] =  $location->name;
+        } else {
+            $location_request = $request->location;
+            $this->data['location_lat'] = $request->lat;
+            $this->data['location_lng'] = $request->lng;
+            $location_request = str_replace('--', ', ', $location_request);
+            $this->data['location_request'] = str_replace('-', ' ', $location_request);
+        }
+
+        if($request->ajax()) {
+            $filter = $request->all();
+            $listings = $this->rooms->with('place_room', 'kind', 'photo_room', 'room_setting');
+            /* Filter bedrooms */
+            if( isset($filter['bedrooms']) && $filter['bedrooms'] > 0 ) {
+                $listings = $listings->where('bedroom_count', $filter['bedrooms']);
+            }
+            /* Filter bathrooms */
+            if( isset($filter['bathrooms']) && $filter['bathrooms'] > 0 ) {
+                $listings = $listings->where('bathroom_count', $filter['bathrooms']);
+            }
+            /* Filter guest */
+            if( isset($filter['guests']) && $filter['guests'] > 0 ) {
+                $listings = $listings->where('count_guest', $filter['guests']);
+            }
+            /* Filter kind */
+            if( isset($filter['kind']) ) {
+                $listings = $listings->whereIn('kind_room_id', $filter['kind']);
+            }
+             /* Filter price between */
+            if( isset($filter['price-min']) && isset($filter['price-max']) ) {
+                $price_min = str_replace(['.', ' đ'], '', $filter['price-min']);
+                $price_max = str_replace(['.', ' đ'], '', $filter['price-max']);
+             
+                $listings = $listings->whereExists(function ($query) use($price_min, $price_max) {
+                    $query->select(\DB::raw(1))
+                        ->from('room_settings')
+                        ->whereRaw('room_settings.room_id = rooms.id')
+                        ->whereBetween('room_settings.base_price', [$price_min, $price_max]);
+                });
+            }
+            /* Filter checkin */
+            if( isset($filter['check-in']) ) {
+                $listings = $listings->whereExists(function ($query) use($filter) {
+                    $query->select(\DB::raw(1))
+                        ->from('room_settings')
+                        ->whereRaw('room_settings.room_id = rooms.id')
+                        ->where('room_settings.calendar', 'not like', '%'. $filter['check-in'] .'%');
+                });
+            }
+            
+            /* Filter type */
+            if( isset($filter['type']) ) {
+                $listings = $listings->whereExists(function ($query) use($filter) {
+                    $query->select(\DB::raw(1))
+                        ->from('amenities_room')
+                        ->whereRaw('amenities_room.room_id = rooms.id')
+                        ->whereIn('amenities_room.amenities_id', $filter['type']);
+                });
+            }
+
+            $listings = $listings->get();
+
+            $makers = array();
+            $i = 0;
+            foreach ($listings as $listing) {
+                $i++;
+                $photos = $listing->photo_room->pluck('name')->toArray();
+                $makers[] = [
+                    "id" => $i,
+                    "type" => $listing->kind->name,
+                    "type_icon" =>  $listing->kind->icon,
+                    "title" => $listing->title,
+                    "location" => isset($listing->state) && isset($listing->city) ? $listing->state.', '.$listing->city : $listing->place_room->state.', '.$listing->place_room->city,
+                    "latitude" => isset($listing->latitude) ? $listing->latitude : $listing->place_room->latitude,
+                    "longitude" => isset($listing->longitude) ? $listing->longitude : $listing->place_room->longitude,
+                    "url" => route('room.detail', $listing->id),
+                    "rating" => 4,
+                    "gallery" => $photos,
+                    "date_created" => "2014-11-03",
+                    "price" =>  _formatPrice($listing->room_setting->base_price),
+                    "guest" => $listing->count_guest,
+                    "description" => $listing->description,
+                    "last_review_rating" => 5
+                ];
+            }
+            $data = [
+                'data' => $makers
+            ];
+            return response()->json($data);
+        }
+
         return view('defaults.rooms', $this->data);
     }
 
     //Json room all
-    public function roomMaker() {
-        $this->data['listings'] = $this->_listingsRoom();
-    	$makers = array();
+   /* public function roomMaker( Request $request ) {
+        $listings = $this->rooms->with('place_room', 'kind', 'photo_room', 'room_setting')->orderBy('id', 'desc')->get();
+    	$this->data['listings'] = $listings;
+        $makers = array();
         $i = 0;
     	foreach ($this->data['listings'] as $listing) {
         	$i++;
 			$photos = $listing->photo_room->pluck('name')->toArray();
-            /*foreach ( $photos as $photo) {
-                $v = $photo.'<br>';
-                // $images = $photo->name.'---------'.$photo->room_id.'<br>';
-                print_r($photos);
-            }*/
+           
     		$makers[] = [
                 "id" => $i,
                 "type" => $listing->kind->name,
@@ -112,6 +197,14 @@ class ClientController extends BaseClientController
     		'data' => $makers
     	];
     	return response()->json($data);
+    }*/
+
+    /* Filter */
+
+    public function __filterFeature( Request $request ) {
+
+
+
     }
 
     //single room detail
@@ -133,7 +226,7 @@ class ClientController extends BaseClientController
             }
         }
 
-        $this->data['check_out']        = $room->room_setting->check_out;
+        $this->data['check_out']        = $check_in;
         $this->data['check_out']        = $room->room_setting->check_out;
         $this->data['availability']     = $room->room_setting->min_trip_length;
         $this->data['weekly_discount']  = $room->room_setting->weekly_discount;

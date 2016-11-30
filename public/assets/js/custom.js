@@ -178,21 +178,21 @@ $(document).ready(function($) {
 
     $('body').addClass('page-fade-in');
 
-    $('a').on('click', function(e) {
-        var attr = $(this).attr('href');
-        //alert( $(this).attr('href') );
-        if (attr.indexOf('#') != 0) {
-            e.preventDefault();
-            var goTo = this.getAttribute("href");
-            $('body').removeClass('page-fade-in');
-            $('body').addClass('page-fade-out');
-            setTimeout(function() {
-                window.location = goTo;
-            }, 200);
-        } else if ($(this).attr('href') == '#') {
-            e.preventDefault();
-        }
-    });
+    /* $('a').on('click', function(e) {
+         var attr = $(this).attr('href');
+         //alert( $(this).attr('href') );
+         if (attr.indexOf('#') != 0) {
+             e.preventDefault();
+             var goTo = this.getAttribute("href");
+             $('body').removeClass('page-fade-in');
+             $('body').addClass('page-fade-out');
+             setTimeout(function() {
+                 window.location = goTo;
+             }, 200);
+         } else if ($(this).attr('href') == '#') {
+             e.preventDefault();
+         }
+     });*/
 
     //  Dropzone -----------------------------------------------------------------------------------------------------------
 
@@ -239,8 +239,10 @@ $(document).ready(function($) {
             var element = $('#' + sliderElement);
             var valueMin = parseInt($(this).attr('data-value-min'));
             var valueMax = parseInt($(this).attr('data-value-max'));
+            var st_valueMin = $('input.value-min').val();
+            var st_valueMax = $('input.value-max').val();
             $(this).noUiSlider({
-                start: [valueMin, valueMax],
+                start: [st_valueMin, st_valueMax],
                 connect: true,
                 range: {
                     'min': valueMin,
@@ -321,15 +323,22 @@ function setInputsWidth() {
 function autoComplete() {
     if (!$("script[src='/assets/js/leaflet.js']").length) {
         var input = document.getElementById('location');
-        var autocomplete = new google.maps.places.Autocomplete(input, {
-            types: ["geocode"]
+        var options = {
+            types: ['geocode'],
+            componentRestrictions: { country: "VN" }
+        };
+        var autocomplete = new google.maps.places.Autocomplete(input, options);
+        var geocoder = new google.maps.Geocoder();
+
+        $('#location').on('keyup keypress', function() {
+            geocodeAddress(geocoder, '');
         });
+
         google.maps.event.addListener(autocomplete, 'place_changed', function() {
             var place = autocomplete.getPlace();
             if (!place.geometry) {
                 return;
             }
-
             var address = '';
             if (place.address_components) {
                 address = [

@@ -15,6 +15,7 @@ class BaseClientController extends Controller
 
     public function __construct(Room $rooms) {
     	$this->rooms = $rooms;
+        $this->data['show_form'] = true;
     }
 
 }

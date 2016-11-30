@@ -44,7 +44,11 @@
     });
 </script>
 <script>
-    $(".input-daterange").datepicker({startDate: new Date()});
+    var forbiden = {!! json_encode($room->room_setting->calendar) !!};
+    $(".input-daterange").datepicker({
+        startDate: new Date(),
+        datesDisabled: forbiden
+    });
 </script>
 @endpush
 
@@ -173,15 +177,15 @@
                                         <form action="" method="POST">
                                             <div class="booking-ip">
                                                 <div class="row row-customs">
-                                                    <div class="col-md-9 col-customs input-daterange">
+                                                    <div class="col-md-9 col-customs input-daterange" data-date-format="yyyy-mm-dd">
                                                         <div class="row row-customs">
                                                             <div class="col-sm-6 col-customs">
                                                                 <label for="checkin_date">Check In</label>
-                                                                <input type="text" id="checkin_date" placeholder="mm/dd/yyyy" class="flatpickr" data-mindate=today autocomplete="off">
+                                                                <input type="text" id="checkin_date" placeholder="yyyy-mm-dd" class="flatpickr" data-mindate=today autocomplete="off">
                                                             </div>
                                                             <div class="col-sm-6 col-customs">
                                                                 <label for="checkout_date">Check Out</label>
-                                                                <input type="text" id="checkout_date" placeholder="mm/dd/yyyy" class="flatpickr" data-mindate="today" autocomplete="off">
+                                                                <input type="text" id="checkout_date" placeholder="yyyy-mm-dd" class="flatpickr" data-mindate="today" autocomplete="off">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -191,13 +195,9 @@
                                                                 Khách
                                                             </label>
                                                             <select name="guests" class="guest-select" id="guest-select" data-prefill="1">
-                                                                <option value="1">1 </option>
-                                                                <option value="2">2 </option>
-                                                                <option value="3">3 </option>
-                                                                <option value="4">4 </option>
-                                                                <option value="5">5 </option>
-                                                                <option value="6">6 </option>
-                                                                <option value="7">7 </option>
+                                                                @for($i = 1; $i < 8; $i++)
+                                                                    <option value="{{ $i }}">{{ $i }}</option>
+                                                                @endfor
                                                             </select>
                                                         </div>
                                                     </div>

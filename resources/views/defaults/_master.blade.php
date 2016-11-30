@@ -53,13 +53,26 @@
 
 
 @stack('js-include')
+
 @stack('js-script')
 <script>
     $(window).load(function(){
         var rtl = false; // Use RTL
         initializeOwl(rtl);
     });
-    autoComplete();
+    /* Tim kiem vi tri */
+    $('#_frm_findSearchLocation').submit(function (e) {
+        var latitude = $('#latitude').val();
+        var longitude = $('#longitude').val();
+        var keyword = $('#location').val();
+        keyword = keyword.replace(/, /g, "--");
+        keyword = keyword.replace(/ /g, "-");
+        var _action_form = "{{ route('client.room') }}" + '/' + keyword + '?lat='+ latitude + '&lng=' + longitude ;
+        $(this).attr('action', _action_form);
+        // e.preventDefault();
+        
+        // window.location = _action_form;
+    });
 </script>
 <!--[if lte IE 9]>
 <script type="text/javascript" src="assets/js/ie-scripts.js"></script>
