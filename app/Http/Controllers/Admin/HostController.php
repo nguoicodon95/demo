@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Room;
 
-class HostController extends Controller
+class HostController extends BaseAdminController
 {
 	protected $rooms;
 	public function __construct(Room $rooms) {
@@ -24,6 +24,6 @@ class HostController extends Controller
     	$member_id = $this->memberID();
     	$listings = $this->rooms->memberId($member_id)->with('place_room', 'kind', 'photo_room')->get();
     	
-    	return view('admins.host.room', compact('listings'));
+    	return view($this->view_dir.'host.room', compact('listings'));
     }
 }

@@ -12,7 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Amenities;
 use Repositories\AmenitiesRepository;
 
-class AmenitiesController extends Controller
+class AmenitiesController extends BaseAdminController
 {
     protected $amenities;
 
@@ -32,7 +32,7 @@ class AmenitiesController extends Controller
     public function index()
     {
         $amenities = $this->amenities->all(['id', 'name', 'label', 'description', 'icon', 'types']);
-        return view('admins.amenities.index', compact('amenities'));
+        return view($this->view_dir.'amenities.index', compact('amenities'));
     }
 
     /**
@@ -42,7 +42,7 @@ class AmenitiesController extends Controller
      */
     public function create(Amenities $amen)
     {
-        return view('admins.amenities.form', compact('amen'));
+        return view($this->view_dir.'amenities.form', compact('amen'));
     }
 
     /**
@@ -83,7 +83,7 @@ class AmenitiesController extends Controller
     public function edit($id)
     {
         $amen = $this->amenities->find($id);
-        return view('admins.amenities.form', compact('amen'));
+        return view($this->view_dir.'amenities.form', compact('amen'));
     }
 
     /**

@@ -12,7 +12,7 @@ use App\Models\Interfaces;
 
 use DB;
 
-class SettingsController extends Controller
+class SettingsController extends BaseAdminController
 {
 	public $data;
 
@@ -59,7 +59,7 @@ class SettingsController extends Controller
 		    return $value['id'];
 		});
 		$this->data['all_id'] = $convert->toArray();
-    	return view('admins.settings.interface.index', $this->data);
+    	return view($this->view_dir.'settings.interface.index', $this->data);
     }
 
     public function insInterface(Request $request, $id) {

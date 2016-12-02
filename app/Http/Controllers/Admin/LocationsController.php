@@ -10,7 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Location;
 use File;
 
-class LocationsController extends Controller
+class LocationsController extends BaseAdminController
 {
     /**
      * Display a listing of the resource.
@@ -20,7 +20,7 @@ class LocationsController extends Controller
     public function index()
     {
         $locations = Location::all();
-        return view('admins.locations.index', compact('locations'));
+        return view($this->view_dir.'locations.index', compact('locations'));
     }
 
     /**
@@ -30,7 +30,7 @@ class LocationsController extends Controller
      */
     public function create(Location $locations)
     {
-        return view('admins.locations.form', compact('locations'));
+        return view($this->view_dir.'locations.form', compact('locations'));
     }
 
     /**
@@ -44,7 +44,7 @@ class LocationsController extends Controller
         $validator = $this->validator($request);
         $locations = Location::create([
             'name'          => $request->name,
-            'slug'          => $request->slug,
+            'slug'          => $request->get('slug') ? str_slug($request->get('slug')) : str_slug($request->get('name')),
             'street'        => $request->name,
             'street_number' => $request->street_number,
             'route'         => $request->route,
@@ -57,11 +57,9 @@ class LocationsController extends Controller
             'zipcode'       => $request->zipcode,
             'show_index'    => $request->show_index,
             'description'   => $request->description,
+            'image'         => $request->image,
         ]);
-        if($request->file('image')) {
-            $locations->setImage($request->file('image'));
-        }
-
+        
         return redirect()->route('locations.index')->with('status', 'Bạn đã vừa thêm thành công một địa điểm.');
     }
 
@@ -84,7 +82,7 @@ class LocationsController extends Controller
     public function edit($id)
     {
         $locations = Location::findOrFail($id);
-        return view('admins.locations.form', compact('locations'));
+        return view($this->view_dir.'locations.form', compact('locations'));
     }
 
     /**
@@ -112,22 +110,17 @@ class LocationsController extends Controller
             'zipcode'       => $request->zipcode,
             'show_index'    => $request->show_index,
             'description'   => $request->description,
+            'image'         => $request->image,
         ];
-        $locations->fill( $request->only('name', 'street_number', 
+        $locations->fill( $request->only('name', 'street_number', 'slug', 
                                         'route', 'city', 
                                         'locality', 'state', 'country', 
                                         'latitude', 'longitude', 'zipcode', 
-                                        'description', 'show_index'))->save();
+                                        'description', 'show_index', 'image'))->save();
         $locations->slug = $request->slug;
         $locations->street = $request->name;
         $locations->save();
-        if($request->file('image')) {
-            $currentImage = public_path($locations->image);
-            if(File::isFile($currentImage)) {
-                File::delete($currentImage);
-            }
-            $locations->setImage($request->file('image'));
-        }
+       
         return redirect()->route('locations.index')->with('status', 'Bạn đã vừa cập nhật thành công một địa điểm.');
     }
 
@@ -140,10 +133,6 @@ class LocationsController extends Controller
     public function destroy($id)
     {
         $locations = Location::findOrFail($id);
-        $currentImage = public_path($locations->image);
-        if(File::isFile($currentImage)) {
-            File::delete($currentImage);
-        }
         $locations->delete();
         return redirect(route('locations.index'))->with('status', 'Bạn đã vừa xóa một địa điểm.');
     }
@@ -151,15 +140,13 @@ class LocationsController extends Controller
     public function validator(Request $request) {
         $messages = [
             'required' => ':attribute không được để trống.',
-            'mimes' => ':attribute không đúng định dạng hình ảnh.',
             'unique' => ':attribute đã được thực hiện trước đó. Hãy tìm một :attribute mới.',
         ];
 
         return $this->validate($request, [
             'name' => 'required',
             'city' => 'required',
-            'image' => 'mimes:jpeg,bmp,jpg,png,gif',
-            'slug' => 'unique:locations,slug,'.$request->route('location'),
+            'slug' => 'required|unique:locations,slug,'.$request->route('location'),
         ], $messages);
     }
 }

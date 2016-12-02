@@ -220,24 +220,23 @@ class Menu extends Model
                  if ($li_class != '') {
                     $li_class = rtrim($li_class, '"').'"';
                 } else {
-                    $li_class = ' class="open active"';
-                    $arrow = '<span class="arrow open"></span></a>';
+                    $li_class = '';
+                    $arrow = '<span class="arrow"></span>';
                 }
                 $collapse_id = Str::slug($item->title, '-');
-                $a_attrs = 'href="#'.$collapse_id.'"';
             } else {
                 $a_attrs = 'href="'.$item->url.'"';
                 $arrow = '';
             }
 
-            $output .= '<li'.$li_class.'><a '.$a_attrs.' target="'.$item->target.'">'
+            $output .= '<li'.$li_class.'>'
+                .'<a '.$a_attrs.'>'
                 .'<i class="'.$item->icon_font.'"></i>'
                 .'<span class="title">'.$item->title.'</span>'
-                .$arrow;
-
+                .$arrow
+                .'</a>';
 
             if (count($children_menu_items) > 0) {
-                // Add tag for collapse panel
                 $output .= '<ul class="sub-menu">';
                 $output = self::buildAdminMenuOutput($children_menu_items, $output, [], $request);
                 $output .= '</ul>';

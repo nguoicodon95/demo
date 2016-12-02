@@ -39,8 +39,6 @@
     </style>
     <script>
         var base_url = '{{ url('/') }}';
-    </script>
-    <script>
         window.Laravel = <?php echo json_encode([
             'csrfToken' => csrf_token(),
         ]); ?>

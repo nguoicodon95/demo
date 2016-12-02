@@ -12,7 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Kind;
 use Repositories\KindRepository;
 
-class KindController extends Controller
+class KindController extends BaseAdminController
 {
     protected $kinds;
 
@@ -27,7 +27,7 @@ class KindController extends Controller
     public function index()
     {
         $kinds = $this->kinds->all(['id', 'name', 'description', 'icon']);
-        return view('admins.kind.index', compact('kinds'));
+        return view($this->view_dir.'kind.index', compact('kinds'));
     }
 
     /**
@@ -37,7 +37,7 @@ class KindController extends Controller
      */
     public function create(Kind $kind)
     {
-        return view('admins.kind.form', compact('kind'));
+        return view($this->view_dir.'kind.form', compact('kind'));
     }
 
     /**
@@ -81,7 +81,7 @@ class KindController extends Controller
     {
         $kind = $this->kinds->find($id);
 
-        return view('admins.kind.form', compact('kind'));
+        return view($this->view_dir.'kind.form', compact('kind'));
     }
 
     /**

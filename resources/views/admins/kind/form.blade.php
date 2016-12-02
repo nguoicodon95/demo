@@ -54,7 +54,7 @@
 			                                <input autofocus="true" autocomplete="off" 
 			                                        class="input input-block input-jumbo lys-address-form__input"
 			                                        id="kinds-label" name="slug" type="text" 
-			                                        placeholder="" value="@if( $kind->exists ){{ $kind->slug }}@else@{{ $data.name | slugify }}@endif"">
+			                                        placeholder="" value="@if( $kind->exists ){{ $kind->slug }}@else@{{ $data.name | slugify }}@endif">
 		                    			</div>
 		                                
 					                    <div class="clearfix"></div>

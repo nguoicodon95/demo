@@ -3,28 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\storePostRequest;
+use App\Http\Requests\editPostRequest;
 use App\Http\Controllers\Controller;
+use \App\Models\Post;
+use \App\Models\Category;
 
-class PostsController extends Controller
+class PostsController extends BaseAdminController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $posts = Post::all();
+        return view($this->view_dir.'posts.list', compact('posts'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function create(Post $post)
     {
-        //
+        $categories = Category::all();
+        return view($this->view_dir.'posts.edit', compact('post', 'categories'));
     }
 
     /**
@@ -33,9 +29,20 @@ class PostsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(storePostRequest $request)
     {
-        //
+         $data = [
+            'category_id' => $request->category_id,
+            'title' => $request->title,
+            'slug' => $request->get('slug') ? str_slug($request->get('slug')) : str_slug($request->get('title')),
+            'description' => $request->description,
+            'content' => $request->content,
+            'image' => $request->image,
+            'keywords' => $request->keywords,
+        ];
+        $created = Post::create($data);
+
+        return redirect()->route('posts.index')->with('status', 'Create success!');
     }
 
     /**
@@ -57,7 +64,9 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::find($id);
+        $categories = Category::all();
+        return view($this->view_dir.'posts.edit', compact('post', 'categories'));
     }
 
     /**
@@ -67,10 +76,22 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(editPostRequest $request, $id)
     {
-        //
-    }
+        $post = Post::find($id);
+        $data = [
+            'category_id' => $request->category_id,
+            'title' => $request->title,
+            'slug' => $request->get('slug') ? str_slug($request->get('slug')) : str_slug($request->get('title')),
+            'description' => $request->description,
+            'content' => $request->content,
+            'image' => $request->image,
+            'keywords' => $request->keywords,
+        ];
+        $updated = $post->update($data);
+
+        return redirect()->route('posts.index')->with('status', 'Updated success!');
+   }
 
     /**
      * Remove the specified resource from storage.
@@ -80,6 +101,11 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::find($id);
+        if(!$post)
+            return redirect()->back()->with('status', 'Not find post exists!');
+        
+        $post->delete();
+        return redirect()->route('posts.index')->with('status', 'Delete success!');
     }
 }

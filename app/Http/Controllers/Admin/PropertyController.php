@@ -12,7 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Property;
 use Repositories\PropertyRepository;
 
-class PropertyController extends Controller
+class PropertyController extends BaseAdminController
 {
     protected $property;
 
@@ -27,7 +27,7 @@ class PropertyController extends Controller
     public function index()
     {
         $properties = $this->property->all(['id', 'name', 'description']);
-        return view('admins.properties.index', compact('properties'));
+        return view($this->view_dir.'properties.index', compact('properties'));
     }
 
     /**
@@ -37,7 +37,7 @@ class PropertyController extends Controller
      */
     public function create(Property $property)
     {
-        return view('admins.properties.form', compact('property'));
+        return view($this->view_dir.'properties.form', compact('property'));
     }
 
     /**
@@ -81,7 +81,7 @@ class PropertyController extends Controller
     {
         $property = $this->property->find($id);
 
-        return view('admins.properties.form', compact('property'));
+        return view($this->view_dir.'properties.form', compact('property'));
     }
 
     /**

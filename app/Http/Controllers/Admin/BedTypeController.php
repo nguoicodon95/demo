@@ -12,7 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BedType;
 use Repositories\BedTypeRepository;
 
-class BedTypeController extends Controller
+class BedTypeController extends BaseAdminController
 {
     protected $bed_types;
 
@@ -27,7 +27,7 @@ class BedTypeController extends Controller
     public function index()
     {
         $bed_types = $this->bed_types->all(['id', 'name', 'description']);
-        return view('admins.bed_type.index', compact('bed_types'));
+        return view($this->view_dir.'bed_type.index', compact('bed_types'));
     }
 
     /**
@@ -37,7 +37,7 @@ class BedTypeController extends Controller
      */
     public function create(BedType $bed_type)
     {
-        return view('admins.bed_type.form', compact('bed_type'));
+        return view($this->view_dir.'bed_type.form', compact('bed_type'));
     }
 
     /**
@@ -78,8 +78,7 @@ class BedTypeController extends Controller
     public function edit($id)
     {
         $bed_type = $this->bed_types->find($id);
-
-        return view('admins.bed_type.form', compact('bed_type'));
+        return view($this->view_dir.'bed_type.form', compact('bed_type'));
     }
 
     /**
@@ -92,7 +91,6 @@ class BedTypeController extends Controller
     public function update(updateBedTypeRequest $request, $id)
     {
         $bed_type = $this->bed_types->find($id);
-
         $bed_type->fill($request->only('name', 'description'))->save();
         
         return redirect(route('bed_types.edit', $bed_type->id))->with('status', 'Bạn đã vừa cập nhật thành công loại giường ngủ "<b>'. $bed_type->name .'</b>".');

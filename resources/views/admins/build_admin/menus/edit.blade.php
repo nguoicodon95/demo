@@ -1,5 +1,5 @@
 @extends('admins.build_admin._master')
-
+@section('titleName', 'Edit menu')
 @section('content')
 <div class="page-content">
 	<!-- BEGIN PAGE HEAD -->

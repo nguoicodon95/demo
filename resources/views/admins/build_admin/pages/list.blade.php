@@ -86,7 +86,7 @@
 							<form style="display: -webkit-inline-box;" action="{{ route('pages.destroy', $page->id) }}" id="delete_form" method="POST">
 								{{ csrf_field() }}
 								{{ method_field('DELETE') }}
-								<button onclick="confirm('Bạn muốn xóa page này?')" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Delete</button>
+								<button onclick="return confirm('Bạn muốn xóa page này?')" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Delete</button>
 							</form>
 						</td>
 					</tr>

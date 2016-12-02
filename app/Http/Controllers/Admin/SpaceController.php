@@ -12,7 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Space;
 use Repositories\SpaceRepository;
 
-class SpaceController extends Controller
+class SpaceController extends BaseAdminController
 {
     protected $spaces;
 
@@ -27,7 +27,7 @@ class SpaceController extends Controller
     public function index()
     {
         $spaces = $this->spaces->all(['id', 'name', 'label', 'description', 'icon']);
-        return view('admins.space.index', compact('spaces'));
+        return view($this->view_dir.'space.index', compact('spaces'));
     }
 
     /**
@@ -37,7 +37,7 @@ class SpaceController extends Controller
      */
     public function create(Space $space)
     {
-        return view('admins.space.form', compact('space'));
+        return view($this->view_dir.'space.form', compact('space'));
     }
 
     /**
@@ -49,7 +49,6 @@ class SpaceController extends Controller
     public function store(storeSpaceRequest $request)
     {
         $this->spaces->create($request->only('name', 'label', 'description', 'icon'));
-
         return redirect(route('spaces.index'))->with('status', 'Bạn đã vừa thêm thành công một tiện ích.');
     }
 
@@ -73,8 +72,7 @@ class SpaceController extends Controller
     public function edit($id)
     {
         $space = $this->spaces->find($id);
-
-        return view('admins.space.form', compact('space'));
+        return view($this->view_dir.'space.form', compact('space'));
     }
 
     /**
