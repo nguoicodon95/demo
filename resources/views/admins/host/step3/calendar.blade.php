@@ -1,19 +1,28 @@
-@extends('admins.master')
-    <?php $step_three = true; ?>
+@extends('admins.build_admin._master')
 
-    @section('titleName')
-        Your listings
-    @stop
+@section('titleName', 'Your listings')
 
-    @section('content')
-        <div class="content">
-            <div class="container-fluid">
-                @include('admins.host._shared.action')
-                
-                <question link="{{ route('host.booking', $data_Room->id) }}" 
-                            back="{{ route('host.occupancy', $data_Room->id) }}"></question>
-                
+@section('content')
+        <div class="page-content">
+            <div class="page-head">
+                <!-- BEGIN PAGE TITLE -->
+                <div class="page-title">
+                    <h1>Cài đặt host</h1>
+                </div>
+                <!-- END PAGE TITLE -->
             </div>
+            <!-- END PAGE HEAD -->
+            <!-- BEGIN PAGE BREADCRUMB -->
+            <ul class="page-breadcrumb breadcrumb">
+                <li>
+                    <a href="javascript:;">Home</a><i class="fa fa-circle"></i>
+                </li>
+                <li class="active">
+                    Host
+                </li>
+            </ul>
+            <question link="{{ route('host.booking', $data_Room->id) }}" 
+                    back="{{ route('host.occupancy', $data_Room->id) }}"></question>
         </div>
 
         <template id="experience-question">
@@ -60,8 +69,10 @@
         </template>
     @stop
 
-    @push('css')
+    @push('css-iclude')
         <link rel="stylesheet" href="{{ asset('admins/assets/css/datepicker.css') }}">
+    @endpush
+    @push('css-style')
         <style>
             label {
                 color: #484848;
@@ -74,9 +85,12 @@
         </style>
     @endpush
 
-    @push('js')
+    @push('js-iclude')
         <script src="{{ asset('admins/assets/js/jquery-ui-1.11.1.js') }}"></script>
         <script src="{{ asset('admins/assets/js/jquery-ui.multidatespicker.js') }}"></script>
+    @endpush
+
+    @push('js-script')
         <script>
             $(function() {
                 var today = new Date();

@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Room extends Model
 {
+    public $primaryKey = 'id';
+
+    public $incrementing = 'false';
+
     protected $table = 'rooms';
 
     protected $fillable = [
@@ -91,7 +95,6 @@ class Room extends Model
     public function getSpaceSpecialAttribute( $value ) {
         return json_decode($value);
     }
-
 
     public function scopeSearchBy($query, $relation, $type)
     {

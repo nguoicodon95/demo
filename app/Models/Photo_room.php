@@ -22,7 +22,7 @@ class Photo_room extends Model
         return $this->belongsTo('App\Models\Room');
     }
 
-    public function setImage(UploadedFile $uploadFile) {
+  /*  public function setImage(UploadedFile $uploadFile) {
         $currentImage = public_path($this->name);
         $fileExt = $uploadFile->getClientOriginalExtension();
         $fileName = nameRand().'.'.$fileExt;
@@ -37,8 +37,8 @@ class Photo_room extends Model
         $this->save();
         return true;
     }
-
-    public function getNameAttribute( $value ) {
+*/
+    /*public function getNameAttribute( $value ) {
         return '/uploads/libraries/'.$value;
-    }
+    }*/
 }

@@ -1,4 +1,4 @@
-var FormWizard = function() {
+var FormSetting = function() {
 
 
     return {
@@ -8,7 +8,7 @@ var FormWizard = function() {
                 return;
             }
 
-            var form = $('#submit_form_basic');
+            var form = $('#submit_form_setting');
             var error = $('.alert-danger', form);
             var success = $('.alert-success', form);
 
@@ -18,39 +18,21 @@ var FormWizard = function() {
                 errorClass: 'help-block help-block-error', // default input error message class
                 focusInvalid: false, // do not focus the last invalid input
                 rules: {
-                    //account
-                    property_type_id: {
-                        required: true
-                    },
-                    kind_room_id: {
-                        required: true
-                    },
-
                     //location
-                    street: {
+                    description: {
                         required: true
                     },
-                    city: {
+                    title: {
                         required: true
                     },
                 },
 
                 messages: {
-                    property_type_id: {
-                        required: "Vui lòng chọn loại tài sản của bạn"
+                    description: {
+                        required: "Mô tả vị trí của bạn"
                     },
-                    kind_room_id: {
-                        required: "Vui lòng chọn loại hình thức khách sẽ thuê"
-                    },
-                    street: {
-                        required: "Vui lòng cung cấp địa chỉ vị trí của bạn"
-                    },
-                    city: {
-                        required: "Trường này không được bỏ trống"
-                    },
-                    'payment[]': {
-                        required: "Please select at least one option",
-                        minlength: jQuery.validator.format("Please select at least one option")
+                    title: {
+                        required: "Tên vị trí của bạn"
                     }
                 },
 
@@ -123,36 +105,34 @@ var FormWizard = function() {
                 var total = navigation.find('li').length;
                 var current = index + 1;
                 // set wizard title
-                $('.step-title', $('#form_step_basic')).text('Step ' + (index + 1) + ' of ' + total);
+                $('.step-title', $('#form_step_setting')).text('Step ' + (index + 1) + ' of ' + total);
                 // set done steps
-                // jQuery('li', $('#form_step_basic')).removeClass("done");
+                // jQuery('li', $('#form_step_setting')).removeClass("done");
                 var li_list = navigation.find('li');
                 for (var i = 0; i < index; i++) {
                     jQuery(li_list[i]).addClass("done");
                 }
 
                 if (current == 1) {
-                    $('#form_step_basic').find('.button-previous').hide();
+                    $('#form_step_setting').find('.button-previous').hide();
                 } else {
-                    $('#form_step_basic').find('.button-previous').show();
+                    $('#form_step_setting').find('.button-previous').show();
                 }
 
                 if (current >= total) {
-                    $('#form_step_basic').find('.button-next').hide();
-                    $('#form_step_basic').find('.button-submit').show();
+                    $('#form_step_setting').find('.button-next').hide();
+                    $('#form_step_setting').find('.button-submit').show();
                     displayConfirm();
                 } else {
-                    $('#form_step_basic').find('.button-next').show();
-                    $('#form_step_basic').find('.button-submit').hide();
+                    $('#form_step_setting').find('.button-next').show();
+                    $('#form_step_setting').find('.button-submit').hide();
                 }
 
                 Metronic.scrollTo($('.page-title'));
             }
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-                LocationMap.init();
-            });
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {});
             // default form wizard
-            $('#form_step_basic').bootstrapWizard({
+            $('#form_step_setting').bootstrapWizard({
                 'nextSelector': '.button-next',
                 'previousSelector': '.button-previous',
                 onTabClick: function(tab, navigation, index, clickedIndex) {
@@ -183,7 +163,7 @@ var FormWizard = function() {
                     var total = navigation.find('li').length;
                     var current = index + 1;
                     var $percent = (current / total) * 100;
-                    $('#form_step_basic').find('.progress-bar').css({
+                    $('#form_step_setting').find('.progress-bar').css({
                         width: $percent + '%'
                     });
                 }
@@ -191,8 +171,8 @@ var FormWizard = function() {
             var repo = new FormRepo('restclient');
             // get the last submitted values back
             repo.restore(form, form.attr('id'));
-            $('#form_step_basic').find('.button-previous').hide();
-            $('#form_step_basic .button-submit').on('click', function() {
+            $('#form_step_setting').find('.button-previous').hide();
+            $('#form_step_setting .button-submit').on('click', function() {
                 repo.preserve(form, form.attr('id'));
                 form.submit();
             }).hide();

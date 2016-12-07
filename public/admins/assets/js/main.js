@@ -25,7 +25,7 @@ $body.on('click', '.show-add-media-popup', function(event) {
 $body.on('click', '.select-media-box .remove-image', function(event) {
     event.preventDefault();
     document.currentMediaBox = $(this).closest('.select-media-box');
-    $imageSrc = '/admin/assets/img/no-image.png';
+    $imageSrc = '/admins/assets/img/no-image.png';
     document.currentMediaBox.find('img.img-responsive').attr('src', $imageSrc);
     document.currentMediaBox.find('.input-file').val('');
 });

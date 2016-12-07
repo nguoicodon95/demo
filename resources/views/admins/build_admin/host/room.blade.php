@@ -29,7 +29,7 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="icon-layers font-dark"></i>
-                            <span class="caption-subject font-red-sunglo bold uppercase">Danh sách các phòng đang hiển thị</span>
+                            <span class="caption-subject font-red-sunglo bold uppercase">Danh sách các phòng đang hoàn thành</span>
                             <span class="caption-helper"></span>
                         </div>
                         <div class="tools">
@@ -45,7 +45,12 @@
                     <div class="portlet-body">
                          @if($listings->count() > 0)
                             @foreach($listings->where('status', 0) as $listing)
-                            {{-- dd($listing->process) --}}
+                            <?php
+                                $step_1 = $listing->process->step_one;
+                                $step_2 = $listing->process->step_two;
+                                $step_3 = $listing->process->step_three;
+                            ?>
+                            @if( $step_1 != 1 || $step_2 != 1 || $step_3 != 1 )
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="content">
@@ -96,6 +101,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
                             @endforeach
                         @endif
                     </div>
@@ -144,28 +150,35 @@
                             <tbody>
                             @if($listings->count() > 0)
                                 @foreach($listings as $k => $listing)
-                                <tr>
-                                    <td>{{ $k+1 }}</td>
-                                    <td>
-                                        <div class="thumb">
-                                            <img src="{{ !empty($listing->photo_room->first()->name) ? asset($listing->photo_room->first()->name) : '' }}" alt="">
-                                        </div>
-                                    </td>
-                                    <td>{{ $listing->title }}</td>
-                                    </td>
-                                    <td>{{ $listing->place_room->city .', '. $listing->place_room->country }}</td>
-                                    <td> {!! $listing->status == 1 ? '<span class="pb">Đang hiển thị</span>' : '<span class="unpb">Chưa hiển thị</span>' !!}</td>
-                                    <td>
-                                        <a href="" class="btn btn-sm btn-primary edit">
-                                            <i class="fa fa-pencil"></i> Edit
-                                        </a>
-                                        <form style="display: -webkit-inline-box;" action="" id="delete_form" method="POST">
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-                                            <button onclick="return confirm('Bạn muốn xóa listing này?')" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                    <?php
+                                        $step_1 = $listing->process->step_one;
+                                        $step_2 = $listing->process->step_two;
+                                        $step_3 = $listing->process->step_three;
+                                    ?>
+                                    @if( $step_1 == 1 && $step_2 == 1 && $step_3 == 1 )
+                                    <tr>
+                                        <td>{{ $k+1 }}</td>
+                                        <td>
+                                            <div class="thumb">
+                                                <img src="{{ !empty($listing->photo_room->first()->name) ? asset($listing->photo_room->first()->name) : '' }}" alt="">
+                                            </div>
+                                        </td>
+                                        <td>{{ $listing->title }}</td>
+                                        </td>
+                                        <td>{{ $listing->place_room->city .', '. $listing->place_room->country }}</td>
+                                        <td> {!! $listing->status == 1 ? '<span class="pb">Đang hiển thị</span>' : '<span class="unpb">Chưa hiển thị</span>' !!}</td>
+                                        <td>
+                                            <a href="{{ route('admin.room.create', $listing->id) }}" class="btn btn-sm btn-primary edit">
+                                                <i class="fa fa-pencil"></i> Edit
+                                            </a>
+                                            <form style="display: -webkit-inline-box;" action="{{ route('admin.room.delete', $listing->id) }}" id="delete_form" method="POST">
+                                                {{ csrf_field() }}
+                                                {{ method_field('DELETE') }}
+                                                <button onclick="return confirm('Bạn muốn xóa listing này?')" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @endif
                                 @endforeach
                             @endif
                             </tbody>

@@ -56,17 +56,11 @@
 		            <div class="content">
 		                Giường, phòng tắm, tiện nghi, và nhiểu chức năng khác
 		                <hr>
-		                @if($data_Room != '' && !is_null($data_Room->process))
-		                	@if($data_Room->process->step_one['completed'] == 100)
-								<a href="{{ isset($next) ? $next : route('host.highlights', $data_Room->id) }}" 
-				                	class="btn {{ (isset($process_two) && $process_two > 95) ? 'btn-change' : 'btn-primary' }} btn-custom" 
-				                	id="submit-step-2">{{ (isset($process_two) && $process_two > 95) ? 'Chỉnh sửa' : 'Làm tiếp' }}
+		               
+						<a href="{{ isset($next) ? $next : route('host.highlights', $data_Room->id) }}" 
+				                	class="btn btn-custom" 
+				                	id="submit-step-2">Làm tiếp
 		                        </a>
-		                        @if(isset($process_two) && $process_two > 95 )
-			                        <span class="ti-check completed pull-right"></span>
-				                @endif
-			                @endif
-		                @endif
 		            </div>
 		        </div>
 		    </div>
@@ -80,35 +74,15 @@
 		            <div class="content">
 		                Giá, lịch, cài đặt đặt phòng
 		                <hr>
-		                @if(isset($process_two) && $process_two > 95)
-		                	@if($data_Room->process->step_one['completed'] == 100 && isset($process_two) && $process_two > 95)
-								<a href="{{ isset($next) ? $next : route('host.experience', $data_Room->id) }}" 
-				                	class="btn {{ (isset($process_three) && $process_three > 95) ? 'btn-change' : 'btn-primary' }} btn-custom" 
-				                	id="submit-step-3">{{ (isset($process_three) && $process_three > 95) ? 'Chỉnh sửa' : 'Làm tiếp' }}
+		                
+						<a href="{{ isset($next) ? $next : route('host.experience', $data_Room->id) }}" 
+				                	class="btn  btn-custom" 
+				                	id="submit-step-3"> Làm tiếp
 		                        </a>
-		                        @if( isset($process_three) && $process_three > 95 )
-			                        <span class="ti-check completed pull-right"></span>
-				                @endif
-			                @endif
-		                @endif
 		            </div>
 		        </div>
 		    </div>
-		    <div class="clearfix"></div>
-		    @if($data_Room != '' && !is_null($data_Room->process))
-			    <?php (int) $complete = $data_Room->process->step_one['completed'] + isset($process_two) ? $process_two : 0 + isset($process_three) ? $process_three : 0; ?>
-			    @if($complete > 97)
-			    <div class="col-md-12">
-				    <a href="{{ route('host.post.active', $data_Room->id) }}" 
-				        	class="btn btn-primary"
-				        	onclick="event.preventDefault();
-	                                document.getElementById('active-form').submit();">Công bố danh sách</a>
-			        <form action="{{ route('host.post.active', $data_Room->id) }}" method="POST" style="display:none" id="active-form">
-			        	{{ csrf_field() }}
-			        </form>
-			    </div>
-			    @endif
-		    @endif
+		    
         </div>
     </div>
 </div>

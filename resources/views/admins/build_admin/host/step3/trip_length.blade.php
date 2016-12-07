@@ -1,65 +1,81 @@
-@extends('admins.master')
-    <?php $step_three = true; ?>
-
-    @section('titleName')
-        Your listings
-    @stop
+@extends('admins.build_admin._master')
+@section('titleName', 'Your listings')
 
     @section('content')
-        <div class="content">
-            <div class="container-fluid">
-                @include('admins.host._shared.action')
-                
-                <triplength link="{{ route('host.booking', $data_Room->id) }}"
-                            count_min={{ isset($trip_min) && $trip_min != '' ? $trip_min : 0 }}
-                            count_max={{ isset($trip_max) && $trip_max != '' ? $trip_max : 0 }}></triplength>
-                
+        <div class="page-content">
+            <div class="page-head">
+                <!-- BEGIN PAGE TITLE -->
+                <div class="page-title">
+                    <h1>Cài đặt host</h1>
+                </div>
+                <!-- END PAGE TITLE -->
             </div>
+            <!-- END PAGE HEAD -->
+            <!-- BEGIN PAGE BREADCRUMB -->
+            <ul class="page-breadcrumb breadcrumb">
+                <li>
+                    <a href="javascript:;">Home</a><i class="fa fa-circle"></i>
+                </li>
+                <li class="active">
+                    Host
+                </li>
+            </ul>
+
+            <triplength link="{{ route('host.booking', $data_Room->id) }}"
+                        count_min={{ isset($trip_min) && $trip_min != '' ? $trip_min : 0 }}
+                        count_max={{ isset($trip_max) && $trip_max != '' ? $trip_max : 0 }}></triplength>
         </div>
 
         <template id="trip-length">
             <div class="row">
                 <div class="col-md-6">
-                    <form action="" method="POST" id="triplength-form">
-                        {{ csrf_field() }}
-                        <input type="hidden" name="_link" value="@{{ link }}">
-                        <div style="margin-bottom: 24px;">
-                            <div class="panel-title">
-                                <h3>Trip length</h3>
-                                <p class="alert alert-danger" v-if="!success">@{{ error }}</p>
-                            </div>
-                            <div class="kind">
-                                <div class="increment-btn no-padding">
-                                    <label for="">Minimum nights</label>
-                                    <div class="increment-btn btn-group no-border-bottom-radius">
-                                        <div class="text-gray btn increment-jumbo increment-btn__label increment-btn__label--with-increment-btns" tabindex="0" role="textbox">
-                                            <div class="increment-btn__border-container-label text-truncated">
-                                                <span class="text-muted"><span>Tối thiểu @{{ count_min }} đêm</span></span>
-                                                <input type="hidden" value="@{{ count_min }}" name="min_trip_length">
+                    <div class="portlet light form-fit">
+                        <div class="portlet-body">
+                            <div class="col-md-12">
+                                <form action="" method="POST" id="triplength-form">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="_link" value="@{{ link }}">
+                                    <div style="margin-bottom: 24px;">
+                                        <div class="">
+                                            <label class="h4">Chiều dài chuyến đi</label>
+                                            <p class="alert alert-danger" v-if="!success">@{{ error }}</p>
+                                        </div>
+                                        <div class="kind">
+                                            <div class="increment-btn no-padding">
+                                                <label for="">Đêm tối thiểu</label>
+                                                <div class="increment-btn btn-group no-border-bottom-radius">
+                                                    <div class="text-gray btn increment-jumbo increment-btn__label increment-btn__label--with-increment-btns" tabindex="0" role="textbox">
+                                                        <div class="increment-btn__border-container-label text-truncated">
+                                                            <span class="text-muted"><span>Tối thiểu @{{ count_min }} đêm</span></span>
+                                                            <input type="hidden" value="@{{ count_min }}" name="min_trip_length">
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" @click="updateMinNightDecrement" :disabled="diasableMin" class="btn btn-jumbo increment-btn__decrementer"></button>
+                                                    <button type="button" @click="updateMinNightIncrement" :disabled="diasableMaxofMin" class="btn btn-jumbo increment-btn__incrementer"></button>
+                                                </div>
                                             </div>
                                         </div>
-                                        <button type="button" @click="updateMinNightDecrement" :disabled="diasableMin" class="btn btn-jumbo increment-btn__decrementer"></button>
-                                        <button type="button" @click="updateMinNightIncrement" :disabled="diasableMaxofMin" class="btn btn-jumbo increment-btn__incrementer"></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="kind">
-                                <div class="increment-btn no-padding">
-                                    <label for="">Maximum nights</label>
-                                    <div class="increment-btn btn-group no-border-bottom-radius">
-                                        <div class="text-gray btn increment-jumbo increment-btn__label increment-btn__label--with-increment-btns" tabindex="0" role="textbox">
-                                            <div class="increment-btn__border-container-label text-truncated">
-                                                <span class="text-muted"><span>Tối đa @{{ count_max }} đêm</span></span>
-                                                <input type="hidden" value="@{{ count_max }}" name="max_trip_length">
+                                        <div class="kind mar-top-15">
+                                            <div class="increment-btn no-padding">
+                                                <label for="">Đêm tối đa</label>
+                                                <div class="increment-btn btn-group no-border-bottom-radius">
+                                                    <div class="text-gray btn increment-jumbo increment-btn__label increment-btn__label--with-increment-btns" tabindex="0" role="textbox">
+                                                        <div class="increment-btn__border-container-label text-truncated">
+                                                            <span class="text-muted"><span>Tối đa @{{ count_max }} đêm</span></span>
+                                                            <input type="hidden" value="@{{ count_max }}" name="max_trip_length">
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" @click="updateMaxNightDecrement" :disabled="diasableMinofMax" class="btn btn-jumbo increment-btn__decrementer"></button>
+                                                    <button type="button" @click="updateMaxNightIncrement" :disabled="diasableMax" class="btn btn-jumbo increment-btn__incrementer"></button>
+                                                </div>
                                             </div>
                                         </div>
-                                        <button type="button" @click="updateMaxNightDecrement" :disabled="diasableMinofMax" class="btn btn-jumbo increment-btn__decrementer"></button>
-                                        <button type="button" @click="updateMaxNightIncrement" :disabled="diasableMax" class="btn btn-jumbo increment-btn__incrementer"></button>
                                     </div>
-                                </div>
+                                </form>
                             </div>
+                            <div class="clearfix"></div>
                         </div>
-                    </form>
+                    </div>
                     <hr>
                     <div>
                         <a href="@{{ link }}" v-if="success"
@@ -74,29 +90,13 @@
                 </div>
                
                 <div class="col-md-5">
-                    <div class="help-panel-container">
-                        <div class="hide-sm help-panel panel">
-                            <div class="panel-body">
-                                <div class="help-panel__bulb-img space-2"></div>
-                                <div class="help-panel__text">
-                                    <div>
-                                        <p>
-                                            <span>Providing the essentials helps guests feel at home in your place</span>
-                                        </p>
-                                        <p>
-                                            <span>Some hosts provide breakfast, or just coffee and tea. None of these things are required, but sometimes they add a nice touch to help guests feel welcome.</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </template>
     @stop
 
-    @push('css')
+    @push('css-style')
         <link rel="stylesheet" href="{{ asset('admins/assets/css/datepicker.css') }}">
         <style>
             label {
@@ -106,6 +106,9 @@
                 display: none;
             }
             .ui-selecting { background: #CCC !important; }
+            .btn-group>.btn:first-child:not(:last-child):not(.dropdown-toggle) {
+                border: 1px solid #e5e5e5;
+            }
             /*.ui-selected { background: #000 !important; color: white; }*/
         </style>
     @endpush

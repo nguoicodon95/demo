@@ -37,6 +37,8 @@ Route::group(['prefix' => 'admin'], function () {
 		Route::get('/', 'Admin\DashboardController@index')->name('admin.home');
 
 		Route::get('/rooms', 'Admin\HostController@listing')->name('admin.room');
+		Route::delete('/rooms/{id}', 'Admin\HostController@deleteHost')->name('admin.room.delete');
+
 		Route::resource('/amenities', 'Admin\AmenitiesController', ['except' => [ 'show' ]]);
 		Route::resource('/spaces', 'Admin\SpaceController', ['except' => [ 'show' ]]);
 		Route::resource('/properties', 'Admin\PropertyController', ['except' => [ 'show' ]]);
@@ -77,8 +79,15 @@ Route::group(['prefix' => 'admin'], function () {
 			Route::group([ 'namespace' => 'Host' ], function () {
 				Route::get('create/{room?}', 'RoomController@index')->name('admin.room.create');
 
-				// STEP 1
+				Route::get('basic/{room?}', 'BasicRegisterController@getForm')->name('host.basic');
+				Route::post('register-host/{room?}', 'BasicRegisterController@postForm')->name('host.register');
+				Route::put('register-host/{room}', 'BasicRegisterController@updateForm')->name('host.update');
 				
+				Route::get('settings/{room?}', 'SettingHostController@getForm')->name('host.setting');
+				Route::put('settings-host/{room?}', 'SettingHostController@postForm')->name('host.upsetting');
+				
+				// STEP 1
+
 				Route::get('rooms/{room?}', 'RoomController@getRoomCreate')->name('host.kindroom');
 				Route::post('rooms/{room?}', 'RoomController@postRoomCreate')->name('host.post.kindroom');
 				Route::put('rooms/{room}/edit', 'RoomController@editRoomCreate')->name('host.edit.kindroom');

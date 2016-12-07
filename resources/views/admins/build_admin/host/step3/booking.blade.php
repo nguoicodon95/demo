@@ -1,99 +1,113 @@
-@extends('admins.master')
-    <?php $step_three = true; ?>
+@extends('admins.build_admin._master')
+@section('titleName', 'Your listings')
 
-    @section('titleName')
-        Your listings
-    @stop
-
-    @section('content')
-        <div class="content">
-            <div class="container-fluid">
-                @include('admins.host._shared.action')
-                
-                <question link="{{ route('host.pricing_mode', $data_Room->id) }}" 
-                            back="{{ route('host.occupancy', $data_Room->id) }}"></question>
-                
+@section('content')
+    <div class="page-content">
+        <div class="page-head">
+            <!-- BEGIN PAGE TITLE -->
+            <div class="page-title">
+                <h1>Cài đặt host</h1>
             </div>
+            <!-- END PAGE TITLE -->
         </div>
+        <ul class="page-breadcrumb breadcrumb">
+            <li>
+                <a href="javascript:;">Home</a><i class="fa fa-circle"></i>
+            </li>
+            <li class="active">
+                Host
+            </li>
+        </ul>        
+        <question link="{{ route('host.pricing_mode', $data_Room->id) }}" 
+                    back="{{ route('admin.room.create', $data_Room->id) }}"></question>
+        
+    </div>
 
         <template id="experience-question">
             <div class="row">
                 <div class="col-md-6">
-                    <form action="" method="POST" id="experience-form">
-                        {{ csrf_field() }}
-                        <div style="margin-bottom: 24px;">
-                            <div class="panel-title">
-                                <h3>Your settings?</h3>
+                    <div class="portlet light form-fit">
+                        <div class="portlet-body">
+                            <div class="col-md-12">
+                                <form action="" method="POST" id="experience-form">
+                                    {{ csrf_field() }}
+                                    <div style="margin-bottom: 24px;">
+                                        <div>
+                                            <h3>Cài đặt lịch</h3>
+                                        </div>
+                                        <ul class="booking-settings">
+                                            <li class="row">
+                                                <div class="col-md-8">
+                                                    <p class="caption"><span>Lịch</span></p>
+                                                    <p class="note">Khách có thể đặt bắt đầu {{ $calendar }}</p>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <a href="{{ route('host.calendar', $data_Room->id) }}" class="btn btn-lg">Change</a>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                            </li>
+                                            <li class="row">
+                                                <div class="col-md-8">
+                                                    <p class="caption"><span>Chiều dài chuyến đi</span></p>
+                                                    <div class="note">
+                                                        <p>
+                                                            @if(isset($booking) && $booking != '')
+                                                                {{ $booking->min_trip_length == 0 ? 'Không thiết lập tối thiểu' : 'Tối thiểu '. $booking->min_trip_length .' đêm' }}
+                                                            @endif
+                                                        </p>
+                                                        <p>
+                                                            @if(isset($booking) && $booking != '')
+                                                                {{ $booking->max_trip_length == 0 ? 'Không thiết lập tối đa' : 'Tối đa '. $booking->max_trip_length .' đêm' }}
+                                                            @endif
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <a href="{{ route('host.triplength', $data_Room->id) }}" class="btn btn-lg">Change</a>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                            </li>
+                                            <li class="row">
+                                                <div class="col-md-8">
+                                                    <p class="caption"><span>Hiệu lực</span></p>
+                                                    <div class="note">
+                                                        <p>
+                                                            @if(isset($booking) && $booking != '')
+                                                                @if( $booking->advance_notice != '')
+                                                                    {{ $booking->advance_notice == 0 ? 'Cùng ngày đặt phòng' : 'Thông báo trước '. $booking->advance_notice/24 .' ngày' }}
+                                                                @endif
+                                                            @endif
+                                                        </p>
+                                                        <p>
+                                                            @if(isset($booking) && $booking != '')
+                                                                @if( $booking->preparation_time != '')
+                                                                    {{ $booking->advance_notice == 0 ? 'Không có thời gian chuẩn bị' : 'Thời gian chuẩn bị '. $booking->advance_notice/24 .' ngày' }}
+                                                                @endif
+                                                            @endif
+                                                        </p>
+                                                        <p>
+                                                            @if(isset($booking) && $booking != '')
+                                                                @if( $booking->booking_window != '' && $booking->booking_window < 365)
+                                                                    {{ $booking->booking_window == 0 ? 'Khách có thể đặt bất cứ ngày nào' : 'Sau '. $booking->booking_window/30 .' tháng' }}
+                                                                @else
+                                                                    {{ 'Sau '. $booking->booking_window/365 .' năm' }}
+                                                                @endif
+                                                            @endif
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <a href="{{ route('host.availability', $data_Room->id) }}" class="btn btn-lg">Change</a>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </form>
                             </div>
-                            <ul class="booking-settings">
-                                <li class="row">
-                                    <div class="col-md-8">
-                                        <p class="caption"><span>Lịch</span></p>
-                                        <p class="note">Khách có thể đặt bắt đầu {{ $calendar }}</p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <a href="{{ route('host.calendar', $data_Room->id) }}" class="btn btn-lg">Change</a>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </li>
-                                <li class="row">
-                                    <div class="col-md-8">
-                                        <p class="caption"><span>Chiều dài chuyến đi</span></p>
-                                        <div class="note">
-                                            <p>
-                                                @if(isset($booking) && $booking != '')
-                                                    {{ $booking->min_trip_length == 0 ? 'Không thiết lập tối thiểu' : 'Tối thiểu '. $booking->min_trip_length .' đêm' }}
-                                                @endif
-                                            </p>
-                                            <p>
-                                                @if(isset($booking) && $booking != '')
-                                                    {{ $booking->max_trip_length == 0 ? 'Không thiết lập tối đa' : 'Tối đa '. $booking->max_trip_length .' đêm' }}
-                                                @endif
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <a href="{{ route('host.triplength', $data_Room->id) }}" class="btn btn-lg">Change</a>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </li>
-                                <li class="row">
-                                    <div class="col-md-8">
-                                        <p class="caption"><span>Hiệu lực</span></p>
-                                        <div class="note">
-                                            <p>
-                                                @if(isset($booking) && $booking != '')
-                                                    @if( $booking->advance_notice != '')
-                                                        {{ $booking->advance_notice == 0 ? 'Cùng ngày đặt phòng' : 'Thông báo trước '. $booking->advance_notice/24 .' ngày' }}
-                                                    @endif
-                                                @endif
-                                            </p>
-                                            <p>
-                                                @if(isset($booking) && $booking != '')
-                                                    @if( $booking->preparation_time != '')
-                                                        {{ $booking->advance_notice == 0 ? 'Không có thời gian chuẩn bị' : 'Thời gian chuẩn bị '. $booking->advance_notice/24 .' ngày' }}
-                                                    @endif
-                                                @endif
-                                            </p>
-                                            <p>
-                                                @if(isset($booking) && $booking != '')
-                                                    @if( $booking->booking_window != '' && $booking->booking_window < 365)
-                                                        {{ $booking->booking_window == 0 ? 'Khách có thể đặt bất cứ ngày nào' : 'Sau '. $booking->booking_window/30 .' tháng' }}
-                                                    @else
-                                                        {{ 'Sau '. $booking->booking_window/365 .' năm' }}
-                                                    @endif
-                                                @endif
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <a href="{{ route('host.availability', $data_Room->id) }}" class="btn btn-lg">Change</a>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </li>
-                            </ul>
+                            <div class="clearfix"></div>
                         </div>
-                    </form>
+                    </div>
                     <hr>
                     <div>
                         <a href="@{{ back }}"  class="back-process">
