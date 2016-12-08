@@ -10,7 +10,7 @@
                                     <input autofocus="true"
                                             class="input input-block input-jumbo lys-summary-form__input"
                                             id="title" name="title" autocomplete="off" placeholder="Tên vị trí của bạn"
-                                            value="">
+                                            value="{{ ($data_Room != '') ? $data_Room->title : '' }}">
                                 </div>
                             </div>
                         </div>

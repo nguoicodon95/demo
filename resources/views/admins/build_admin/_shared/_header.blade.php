@@ -3,8 +3,8 @@
 	<div class="page-header-inner">
 		<!-- BEGIN LOGO -->
 		<div class="page-logo">
-			<a href="index.html">
-			<img src="/admins/assets/root/img/logo-light.png" alt="logo" class="logo-default"/>
+			<a href="{{ route('admin.home') }}">
+			<span class="logo-default"><b>I</b>stay<u><b>H</b>ere</u>.vn</span>
 			</a>
 			<div class="menu-toggler sidebar-toggler">
 				<!-- DOC: Remove the above "hide" to enable the sidebar toggler button on header -->
@@ -369,18 +369,15 @@
 							</li>
 						</ul>
 					</li>
-					<!-- END TODO DROPDOWN -->
-					<!-- BEGIN USER LOGIN DROPDOWN -->
-					<!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
 					<li class="dropdown dropdown-user dropdown-dark">
 						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
 						<span class="username username-hide-on-mobile">
-						Nick </span>
-						<!-- DOC: Do not remove below empty space(&nbsp;) as its purposely used -->
-						<img alt="" class="img-circle" src="/admins/assets/root/img/avatar9.jpg"/>
+							{{ auth()->guard('dev')->user()->first_name }}
+						</span>
+						<img alt="" class="img-circle" src="{{ auth()->guard('dev')->user()->avatar }}"/>
 						</a>
 						<ul class="dropdown-menu dropdown-menu-default">
-							<li>
+							<!--li>
 								<a href="extra_profile.html">
 								<i class="icon-user"></i> My Profile </a>
 							</li>
@@ -401,14 +398,16 @@
 								</a>
 							</li>
 							<li class="divider">
-							</li>
+							</li-->
 							<li>
-								<a href="extra_lock.html">
-								<i class="icon-lock"></i> Lock Screen </a>
-							</li>
-							<li>
-								<a href="login.html">
-								<i class="icon-key"></i> Log Out </a>
+								<a href="{{ route('admin.logout') }}"
+									onclick="event.preventDefault();
+									document.getElementById('logout-form').submit();">
+									<i class="icon-key"></i> Thoát
+								</a>
+								<form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
+									{{ csrf_field() }}
+								</form>
 							</li>
 						</ul>
 					</li>

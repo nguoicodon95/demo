@@ -18,4 +18,41 @@
             return $price . ' đ';
 	    }
 	}
+
+	
+	if (! function_exists('_setName')) {
+	    function _setName($state, $city, $country)
+	    {
+			$name = '';
+	        if($state != '') :
+				$name .= $state .', ';
+			else :
+				$name .= '';
+			endif;
+
+			if($city != '') :
+				$name .= $city .', ';
+			else :
+				$name .= '';
+			endif;
+
+			if($country != '') :
+				$name .= $country;
+			else :
+				$name .= '';
+			endif;
+
+			return $name;
+	    }
+	}
+
+	
+	if (! function_exists('_menuHtml')) {
+	    function _menuHtml($name, $type)
+	    {
+	        return \App\Models\Menu::display($name, $type);
+	    }
+	}
+
+	
 ?>

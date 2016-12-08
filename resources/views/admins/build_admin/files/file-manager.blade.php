@@ -1,26 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>CMS File Browser</title>
+@extends('admins.build_admin._master')
+@section('titleName', 'Files marnager')
+@section('content')
+    <div class="page-content">
+        <div id="elfinder"></div>
+    </div>
+@stop
 
+@push('css-include')
     <link rel="stylesheet" href="/admins/assets/root/global/plugins/jquery-ui/jquery-ui.min.css"/>
-
-    <!-- elFinder CSS (REQUIRED) -->
     <link rel="stylesheet" type="text/css" href="/packages/barryvdh/elfinder/css/elfinder.min.css">
     <link rel="stylesheet" type="text/css" href="/packages/barryvdh/elfinder/css/theme.css">
-</head>
-<body>
-    <!-- Element where elFinder will be created (REQUIRED) -->
-    <div id="elfinder"></div>
+@endpush
 
-    <!-- jQuery and jQuery UI (REQUIRED) -->
-    <script src="/admins/assets/root/global/plugins/jquery.min.js"></script>
-    <script src="/admins/assets/root/global/plugins/jquery-ui/jquery-ui.min.js"></script>
 
-    <!-- elFinder JS (REQUIRED) -->
+@push('js-include')
     <script src="/packages/barryvdh/elfinder/js/elfinder.min.js"></script>
+@endpush
 
+@push('js-script')
     <script type="text/javascript" charset="utf-8">
         var baseUrl = '{{ asset('') }}';
         var selectMethod = '{{ Request::get('method', 'standalone') }}';
@@ -68,5 +65,4 @@
             });
         });
     </script>
-</body>
-</html>
+@endpush

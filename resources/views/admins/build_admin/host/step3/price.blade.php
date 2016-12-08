@@ -22,7 +22,7 @@
                 </li>
             </ul>
 
-            <price link="{{ route('host.occupancy', $data_Room->id) }}"  min-price={{ $min_price }}  max-price={{ $max_price }}
+            <price link="{{ route('host.addpricing', $data_Room->id) }}"  min-price={{ $min_price }}  max-price={{ $max_price }}
                     back="{{ route('admin.room.create', $data_Room->id) }}"></price>
         </div>
 

@@ -10,7 +10,9 @@ Route::get('around-locations.json/{id}', 'ClientController@__around_locations')-
 Route::get('rooms/{id}', 'ClientController@singleRoom')->name('room.detail');
 Route::get('rooms/{id}', 'ClientController@singleRoom')->name('room.detail');
 
-
+Route::get('{slug}', function () {
+	return 'Đang cập nhật';
+})->name('client.read');
 // Route::get('rooms/libraries/{id}', function () {
 //     return view('defaults/libraries-room');
 // });
@@ -68,6 +70,7 @@ Route::group(['prefix' => 'admin'], function () {
 		Route::post('menu/add_item', 'Admin\MenuController@add_item')->name('menus.add_item');
 		Route::put('menu/update_menu_item', 'Admin\MenuController@update_item')->name('menus.update_menu_item');
 		Route::post('menu/order', 'Admin\MenuController@order_item')->name('menus.order_item');
+		Route::post('menu/add-related', 'Admin\MenuController@addRelated')->name('menus.related');
 
 		/*FILE*/
 
@@ -86,72 +89,13 @@ Route::group(['prefix' => 'admin'], function () {
 				Route::get('settings/{room?}', 'SettingHostController@getForm')->name('host.setting');
 				Route::put('settings-host/{room?}', 'SettingHostController@postForm')->name('host.upsetting');
 				
-				// STEP 1
-
-				Route::get('rooms/{room?}', 'RoomController@getRoomCreate')->name('host.kindroom');
-				Route::post('rooms/{room?}', 'RoomController@postRoomCreate')->name('host.post.kindroom');
-				Route::put('rooms/{room}/edit', 'RoomController@editRoomCreate')->name('host.edit.kindroom');
-
-
-				Route::get('bedrooms/{room?}', 'RoomController@getBedroomCreate')->name('host.bedrooms');
-				Route::post('bedrooms/{room?}', 'RoomController@postBedroomCreate')->name('host.post.bedrooms');
-				Route::put('bedrooms/{room}/edit', 'RoomController@editBedroomCreate')->name('host.edit.bedrooms');
-
-
-				Route::get('bathrooms/{room?}', 'RoomController@getBathroomCreate')->name('host.bathrooms');
-				Route::post('bathrooms/{room?}', 'RoomController@postBathroomCreate')->name('host.post.bathrooms');
-				Route::put('bathrooms/{room}/edit', 'RoomController@editBathroomCreate')->name('host.edit.bathrooms');
+				Route::put('active/{room}', 'RoomController@postActiveCreate')->name('host.active');
+				Route::put('status/{room}', 'RoomController@statusUpdate')->name('host.status');
 				
-
-				Route::get('locations/{room?}', 'RoomController@getLocationCreate')->name('host.location');
-				Route::post('locations/{room?}', 'RoomController@postLocationCreate')->name('host.post.location');
-				Route::put('locations/{room}/edit', 'RoomController@editLocationCreate')->name('host.edit.location');
-				
-
-				Route::get('amenities/{room?}', 'RoomController@getAmenitieCreate')->name('host.amenities');
-				Route::post('amenities/{room?}', 'RoomController@postAmenitieCreate')->name('host.post.amenities');
-				Route::put('amenities/{room}/edit', 'RoomController@editAmenitieCreate')->name('host.edit.amenities');
-
-
-				Route::get('spaces/{room?}', 'RoomController@getSpaceCreate')->name('host.spaces');
-				Route::post('spaces/{room?}', 'RoomController@postSpaceCreate')->name('host.post.spaces');
-				Route::put('spaces/{room}/edit', 'RoomController@editSpaceCreate')->name('host.edit.spaces');
-
-				//STEP 2
-
-				Route::get('highlights/{room?}', 'RoomController@getHighlightCreate')->name('host.highlights');
-				Route::post('highlights/{room?}', 'RoomController@postHighlightCreate')->name('host.post.highlights');
-				Route::put('highlights/{room}/edit', 'RoomController@editHighlightCreate')->name('host.edit.highlights');
-
-				Route::get('description/{room?}', 'RoomController@getDescriptionCreate')->name('host.description');
-				Route::post('description/{room?}', 'RoomController@postDescriptionCreate')->name('host.post.description');
-				Route::put('description/{room}/edit', 'RoomController@editDescriptionCreate')->name('host.edit.description');
-				
-
-				Route::get('title/{room?}', 'RoomController@getTitleCreate')->name('host.title');
-				Route::post('title/{room?}', 'RoomController@postTitleCreate')->name('host.post.title');
-				Route::put('title/{room}/edit', 'RoomController@editTitleCreate')->name('host.edit.title');
-
-				Route::get('api/photos/{room?}', 'RoomController@getAPIPhotos');
-				Route::put('api/photos/{id}/{room?}', 'RoomController@updateAPIPhotos');
-				Route::delete('api/photos/{id}/{room?}', 'RoomController@deleteAPIPhotos');
-				Route::get('photos/{room?}', 'RoomController@getPhotosCreate')->name('host.photos');
-				Route::post('photos/{room?}', 'RoomController@postPhotosCreate')->name('host.post.photos');
-				Route::put('photos/{room}/edit', 'RoomController@editPhotosCreate')->name('host.edit.photos');
-
-
+				Route::delete('/photo/{id}', 'SettingHostController@removePhoto')->name('rm.photo');
 				//step 3
 
-
-				Route::get('experience-question/{room?}', 'RoomController@getExperienceCreate')->name('host.experience');
-				Route::post('experience-question/{room?}', 'RoomController@postExperienceCreate')->name('host.post.experience');
-				
-
-				Route::get('occupancy-question/{room?}', 'RoomController@getOccupancyCreate')->name('host.occupancy');
-				Route::post('occupancy-question/{room?}', 'RoomController@postOccupancyCreate')->name('host.post.occupancy');
-
 				Route::get('booking-settings/{room?}', 'RoomController@getBookingCreate')->name('host.booking');
-				// Route::post('experience-question/{room?}', 'RoomController@postQuestionCreate')->name('host.post.experience');
 
 				Route::get('calendar/{room?}', 'RoomController@getCalendarCreate')->name('host.calendar');
 				Route::post('calendar/{room?}', 'RoomController@postCalendarCreate')->name('host.post.calendar');
@@ -173,9 +117,6 @@ Route::group(['prefix' => 'admin'], function () {
 				
 				Route::get('house-rules/{room?}', 'RoomController@getHouseRulesCreate')->name('host.rules');
 				Route::post('house-rules/{room?}', 'RoomController@postHouseRulesCreate')->name('host.post.rules');
-				
-				Route::get('active/{room?}', 'RoomController@getActiveCreate')->name('host.active');
-				Route::post('active/{room?}', 'RoomController@postActiveCreate')->name('host.post.active');
 			
 				Route::get('locations-around/{room?}', 'RoomController@getLocationsAroundCreate')->name('host.locations_around');
 				Route::post('locations-around/{room?}', 'RoomController@postLocationsAroundCreate')->name('host.post.locations_around');

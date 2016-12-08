@@ -7,6 +7,17 @@
                         <div class="col-md-12">
                             <div class="photos">
                                 <div class="kind">
+                                    @if($data_Room != '' && !empty($data_Room->photo_room))
+                                    @foreach($data_Room->photo_room as $photo)
+                                    <div class="select-media-box">
+                                        <a title="" class="show-add-media-popup">
+                                            <img src="{{ $photo->name }}" alt="Thumbnail" class="img-responsive">
+                                        </a>
+                                        <input type="hidden" name="photo[]" value="{{ $photo->name }}" class="input-file">
+                                        <a title="" class="remove-image" id-pt="{{ $photo->id }}"><span>&nbsp;</span></a>
+                                    </div>
+                                    @endforeach
+                                    @else
                                     <div class="select-media-box">
                                         <a title="" class="show-add-media-popup">
                                             <img src="/admins/assets/img/no-image.png" alt="Thumbnail" class="img-responsive">
@@ -28,7 +39,7 @@
                                         <input type="hidden" name="photo[]" value="" class="input-file">
                                         <a title="" class="remove-image"><span>&nbsp;</span></a>
                                     </div>
-
+                                    @endif
                                     <div style="display: flex" class="addbxphoto" @click="addbxthumb">
                                         <a href="#">Thêm ảnh</a>
                                     </div>

@@ -97,7 +97,7 @@
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default updown" counter="down" type="button"><i class="fa fa-minus"></i></button>
                                             </span>
-                                            <input type="number" class="form-control" id="bedrooms" name="bedrooms" placeholder="Any" min=0 max=16 value={{ $dt_filter['bedrooms'] or 0 }}>
+                                            <input type="number" class="form-control" id="bedrooms" name="bedrooms" placeholder="Any" min=0 max=16 value={{ !empty($dt_filter) && isset($dt_filter['bedrooms']) ? $dt_filter['bedrooms'] : 0 }}>
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default updown" counter="up" type="button"><i class="fa fa-plus"></i></button>
                                             </span>
@@ -113,7 +113,7 @@
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default updown" counter="down" type="button"><i class="fa fa-minus"></i></button>
                                             </span>
-                                            <input type="number" class="form-control" id="bathrooms" name="bathrooms" placeholder="Any" min=0 max=16 value={{ $dt_filter['bathrooms'] or 0 }}>
+                                            <input type="number" class="form-control" id="bathrooms" name="bathrooms" placeholder="Any" min=0 max=16 value={{ !empty($dt_filter) && isset($dt_filter['bathrooms']) ? $dt_filter['bathrooms'] : 0 }}>
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default updown" counter="up" type="button"><i class="fa fa-plus"></i></button>
                                             </span>
@@ -197,25 +197,33 @@
                     <h2>Nổi bật - Featured</h2>
                 </header>
                 <div class="row">
+                    @foreach($featured as $f)
                     <div class="col-md-3 col-sm-3">
                         <div class="item featured equal-height">
                             <div class="image">
-                                <div class="quick-view"><i class="fa fa-eye"></i><span>Quick View</span></div>
-                                <a href="">
-                                    <div class="icon">
+                                <!--div class="quick-view"><i class="fa fa-eye"></i><span>Quick View</span></div-->
+                                <a href="{{ route('room.detail', $f->id) }}">
+                                    <!--div class="icon">
                                         <i class="fa fa-thumbs-up"></i>
-                                    </div>
-                                    <img src="/assets/img/items/6.jpg" alt="">
+                                    </div-->
+                                    <img src="{{ $f->photo_room[0]->name }}" alt="">
                                 </a>
                             </div>
                             <div class="wrapper">
-                                <a href="real-estate-item-detail.html"><h3>3295 Valley Street</h3></a>
-                                <figure>Collingswood</figure>
-                                <div class="price">$42.000</div>
+                                <a href="{{ route('room.detail', $f->id) }}">
+                                    <h3>{{ $f->title }}</h3>
+                                </a>
+                                <?php
+                                    $name = _setName($f->place_room->state, $f->place_room->city, $f->place_room->country);
+                                ?>
+                                <figure>{{ $name }}</figure>
+                                <div class="price">{{ _formatPrice($f->room_setting->base_price) }}</div>
                                 <div class="info">
                                     <div class="type">
-                                        <i><img src="/assets/icons/real-estate/apartment-3.png" alt=""></i>
-                                        <span>Apartment</span>
+                                        <i class="{{ $f->kind->icon or '' }}"></i>
+                                        <span>{{ $f->kind->name or '' }}</span>
+                                        <i class="icon-guest"></i>
+                                        <span>{{ $f->count_guest or 1 }}</span>
                                     </div>
                                     <!--div class="rating" data-rating="4"></div-->
                                 </div>
@@ -223,82 +231,8 @@
                         </div>
                         <!-- /.item-->
                     </div>
-                    <!--/.col-sm-4-->
-                    <div class="col-md-3 col-sm-3">
-                        <div class="item featured equal-height">
-                            <div class="image">
-                                <div class="quick-view"><i class="fa fa-eye"></i><span>Quick View</span></div>
-                                <a href="real-estate-item-detail.html">
-                                    <div class="icon">
-                                        <i class="fa fa-thumbs-up"></i>
-                                    </div>
-                                    <img src="/assets/img/items/12.jpg" alt="">
-                                </a>
-                            </div>
-                            <div class="wrapper">
-                                <a href="real-estate-item-detail.html"><h3>534 Roosevelt Street</h3></a>
-                                <figure>San Francisco</figure>
-                                <div class="price">$16.000</div>
-                                <div class="info">
-                                    <div class="type">
-                                        <i><img src="/assets/icons/real-estate/apartment-3.png" alt=""></i>
-                                        <span>Apartment</span>
-                                    </div>
-                                    <!--div class="rating" data-rating="4"></div-->
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /.item-->
-                    </div>
-                    <!--/.col-sm-4-->
-                    <div class="col-md-3 col-sm-3">
-                        <div class="item featured equal-height">
-                            <div class="image">
-                                <div class="quick-view"><i class="fa fa-eye"></i><span>Quick View</span></div>
-                                <a href="real-estate-item-detail.html">
-                                    <img src="/assets/img/items/1.jpg" alt="">
-                                </a>
-                            </div>
-                            <div class="wrapper">
-                                <a href="real-estate-item-detail.html"><h3>3019 White Avenue</h3></a>
-                                <figure>Corpus Christi</figure>
-                                <div class="price">$39.000</div>
-                                <div class="info">
-                                    <div class="type">
-                                        <i><img src="/assets/icons/real-estate/apartment-3.png" alt=""></i>
-                                        <span>Apartment</span>
-                                    </div>
-                                    <!--div class="rating" data-rating="4"></div-->
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /.item-->
-                    </div>
-                    <!--/.col-sm-4-->
-                    <div class="col-md-3 col-sm-3">
-                        <div class="item featured equal-height">
-                            <div class="image">
-                                <div class="quick-view"><i class="fa fa-eye"></i><span>Quick View</span></div>
-                                <a href="real-estate-item-detail.html">
-                                    <img src="/assets/img/items/8.jpg" alt="">
-                                </a>
-                            </div>
-                            <div class="wrapper">
-                                <a href="real-estate-item-detail.html"><h3>1882 Trainer Avenue</h3></a>
-                                <figure>Louisville</figure>
-                                <div class="price">$150.000</div>
-                                <div class="info">
-                                    <div class="type">
-                                        <i><img src="/assets/icons/real-estate/apartment-3.png" alt=""></i>
-                                        <span>Apartment</span>
-                                    </div>
-                                    <!--div class="rating" data-rating="4"></div-->
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /.item-->
-                    </div>
-                    <!--/.col-sm-4-->
+                    <!--/.col-sm-3-->
+                    @endforeach
                 </div>
             </div>
         </section>

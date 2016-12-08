@@ -7,33 +7,29 @@
                                 <!--New Items-->
                                 <section>
                                     <h2>Các phòng vừa đăng</h2>
-                                    <a href="travel-item-detail.html" class="item-horizontal small">
-                                        <h3>Elite Canyon Hotel</h3>
-                                        <figure>France</figure>
+                                    @foreach($relatedRoom as $room)
+                                    <a href="" class="item-horizontal small">
+                                        <h3>{{ $room->title or '' }}</h3>
+                                        <figure>
+                                            {{ _setName($room->place_room->state, $room->place_room->city, $room->place_room->country) }}
+                                        </figure>
                                         <div class="wrapper">
-                                            <div class="image"><img src="/assets/img/items/2.jpg" alt=""></div>
+                                            <div class="image">
+                                                <img src="{{ !empty($room->photo_room) ? $room->photo_room[0]->name : '' }}" alt="{{ $room->title or '' }}" title="{{ $room->title or '' }}">
+                                            </div>
                                             <div class="info">
-                                                <div class="type date">
-                                                    <span>15.2. - 22.2.2015</span>
+                                                <div class="type">
+                                                    <i class="{{ $room->kind->icon or '' }}"></i>
+                                                    <span>{{ $room->kind->name or '' }}</span>
                                                 </div>
-                                                <div class="rating stars-hidden" data-rating="4"></div>
+                                                <div class="type">
+                                                    <i class="icon-guest"></i>
+                                                    <span>{{ $room->count_guest or 1 }} người</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </a>
-                                    <!--/.item-horizontal small-->
-                                    <a href="travel-item-detail.html" class="item-horizontal small">
-                                        <h3>Pacific Pass Resort</h3>
-                                        <figure>Italy</figure>
-                                        <div class="wrapper">
-                                            <div class="image"><img src="/assets/img/items/30.jpg" alt=""></div>
-                                            <div class="info">
-                                                <div class="type date">
-                                                    <span>15.2. - 22.2.2015</span>
-                                                </div>
-                                                <div class="rating stars-hidden" data-rating="3"></div>
-                                            </div>
-                                        </div>
-                                    </a>
+                                    @endforeach
                                     <!--/.item-horizontal small-->
                                 </section>
                                 <!--end New Items-->
@@ -42,12 +38,8 @@
                                 <!--Recent Reviews-->
                                 <section>
                                     <h2>Công ty</h2>
-                                    <ul>
-                                        <li><a href="">Về chúng tôi</a></li>
-                                        <li><a href="">Blog</a></li>
-                                        <li><a href="">Trợ giúp</a></li>
-                                        <li><a href="">Chính sách</a></li>
-                                    </ul>
+                                    {!! _menuHtml('footer-menu', 'bootstrap') !!}
+                                   
                                 </section>
                                 <!--end Recent Reviews-->
                             </div>

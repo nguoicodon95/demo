@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="{{ asset('assets/fonts/font-awesome.css') }}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.css') }}" type="text/css">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
@@ -56,6 +56,11 @@
 
 @stack('js-script')
 <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
     $(window).load(function(){
         var rtl = false; // Use RTL
         initializeOwl(rtl);
@@ -69,9 +74,6 @@
         keyword = keyword.replace(/ /g, "-");
         var _action_form = "{{ route('client.room') }}" + '/' + keyword + '?lat='+ latitude + '&lng=' + longitude ;
         $(this).attr('action', _action_form);
-        // e.preventDefault();
-        
-        // window.location = _action_form;
     });
 </script>
 <!--[if lte IE 9]>

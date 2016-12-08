@@ -20,4 +20,14 @@ class MenuNode extends Model
         'css_class',
         'order'
     ];
+
+    public function page()
+    {
+        return $this->belongsTo('App\Models\Page', 'related_id');
+    }
+    
+    public function category()
+    {
+        return $this->belongsTo('App\Models\Category', 'related_id');
+    }
 }

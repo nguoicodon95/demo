@@ -18,7 +18,7 @@ class MenuController extends Controller
     public function index()
     {
         $menus = Menu::all();
-         return view($this->view_dir.'menus.list', compact('menus'));
+        return view($this->view_dir.'menus.list', compact('menus'));
     }
 
     public function create(Menu $menu)
@@ -56,7 +56,11 @@ class MenuController extends Controller
     {
         $menu = Menu::find($id);
         if(!$menu) return redirect()->route('menus.index');
-        return view($this->view_dir.'menus.edit', compact('menu'));
+
+        $this->data['categories'] = \App\Models\Category::all();
+        $this->data['pages'] = \App\Models\Page::all();
+        $this->data['menu'] = $menu;
+        return view($this->view_dir.'menus.edit', $this->data);
     }
 
     public function delete_menu($id)
@@ -119,6 +123,18 @@ class MenuController extends Controller
                 $this->orderMenu($menuItem->children, $item->id);
             }
         }
+    }
+
+    public function addRelated(Request $request) {
+        $related_id = $request->related_id;
+        foreach($related_id as $related) {
+            MenuNode::create([
+                'menu_id' => $request->menu_id,
+                'related_id' => $related,
+                'type' => $request->type
+            ]);
+        }
+        return redirect()->route('menus.builder', $request->menu_id);
     }
 
 }

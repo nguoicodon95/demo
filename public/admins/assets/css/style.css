@@ -1363,3 +1363,8 @@ select:disabled {
 .img-cover img {
     max-height: 195px;
 }
+
+button:focus,
+button:active {
+    outline: 0;
+}

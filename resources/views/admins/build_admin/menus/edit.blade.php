@@ -95,6 +95,99 @@
                     <!-- END FORM-->
                 </div>
             </div>
+            <!-- Categories -->
+            @if(isset($categories) && sizeof($categories) > 0)
+            <div class="portlet light form-fit" data-type="custom-link">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="icon-layers font-dark"></i>
+                        <span class="caption-subject font-green-sharp bold uppercase">Danh mục</span>
+                        <span class="caption-helper"></span>
+                    </div>
+                    <div class="tools">
+                        <a href="javascript:;" class="reload" data-original-title="" title=""></a>
+                        <a href="javascript:;" class="collapse" data-original-title="" title=""></a>
+                    </div>
+                </div>
+                <div class="portlet-body form">
+                    <form action="{{ route('menus.related') }}" method="post" class="form-horizontal form-bordered">
+                        {{ csrf_field() }}
+                        <div class="form-body">
+                            @foreach($categories as $category)
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <label class="control-label">
+                                        <input type="checkbox" class="form-control" placeholder="" value="{{ $category->id }}" name="related_id[]"> {{ $category->title }}
+                                        <input type="hidden" name="type" value="category">
+                                    </label>
+                                </div>
+                            </div>
+                            @endforeach
+
+                            @if(isset($menu))
+                            <input type="hidden" name="menu_id" value="{{ $menu->id }}">
+                            @endif 
+                            <div class="form-group last">
+                                <div class="col-md-12 text-right">
+                                    <button class="btn btn-primary add-item"
+                                            type="submit">
+                                        <i class="fa fa-plus"></i> Add
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- END FORM-->
+                </div>
+            </div>
+            @endif
+            <!-- Page -->
+            @if(isset($pages) && sizeof($pages) > 0)
+            <div class="portlet light form-fit">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="icon-layers font-dark"></i>
+                        <span class="caption-subject font-green-sharp bold uppercase">Page</span>
+                        <span class="caption-helper"></span>
+                    </div>
+                    <div class="tools">
+                        <a href="javascript:;" class="reload" data-original-title="" title=""></a>
+                        <a href="javascript:;" class="collapse" data-original-title="" title=""></a>
+                    </div>
+                </div>
+                <div class="portlet-body form">
+                    <form action="{{ route('menus.related') }}" method="post" class="form-horizontal form-bordered">
+                        {{ csrf_field() }}
+                        <div class="form-body">
+                            @foreach($pages as $page)
+
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <label class="control-label">
+                                        <input type="checkbox" class="form-control" placeholder="" value="{{ $page->id }}" name="related_id[]"> {{ $page->title }}
+                                        <input type="hidden" name="type" value="page">
+                                    </label>
+                                </div>
+                            </div>
+                            @endforeach
+
+                            @if(isset($menu))
+                            <input type="hidden" name="menu_id" value="{{ $menu->id }}">
+                            @endif 
+                            <div class="form-group last">
+                                <div class="col-md-12 text-right">
+                                    <button class="btn btn-primary add-item"
+                                            type="submit">
+                                        <i class="fa fa-plus"></i> Add
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- END FORM-->
+                </div>
+            </div>
+            @endif
         </div>
         <div class="col-md-8">
             <div class="portlet light form-fit" data-type="custom-link">
@@ -171,7 +264,7 @@
                                     </label>
                                     <div class="dd" id="nestable-menu" url-order="{{ route('menus.order_item') }}">
                                     @if(isset($menu))
-                                        {!! \App\Models\Menu::display($menu->slug, 'admin') !!}
+                                        {!! _menuHtml($menu->slug, 'admin') !!}
                                     @endif
                                     </div>
                                 </div>
@@ -196,66 +289,62 @@
 </div>
 
 <div class="modal modal-info fade" tabindex="-1" id="edit_modal" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title"><i class="voyager-edit"></i> Cập nhật phần tử menu</h4>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><i class="voyager-edit"></i> Cập nhật phần tử menu</h4>
+        </div>
+        <form action="{{ route('menus.update_menu_item') }}" id="edit_form" method="POST">
+            <div class="modal-body">
+                <label for="name">Title</label>
+                <input type="text" class="form-control" id="edit_title" name="title" placeholder="Title"><br>
+                <label for="url">URL</label>
+                <input type="text" class="form-control" id="edit_url" name="url" placeholder="URL"><br>
+                <label for="icon_class">Font Icon</label>
+                <input type="text" class="form-control" id="edit_icon_class" name="icon_font"
+                        placeholder="Icon Class (optional)"><br>
+                <label for="icon_class">Css class</label>
+                <input type="text" class="form-control" id="edit_css_class" name="css_class"
+                        placeholder="Css Class"><br>
+                <label for="target">Target</label>
+                <select id="edit_target" class="form-control" name="target">
+                    <option value="_self" selected="selected">Same Tab/Window</option>
+                    <option value="_blank">New Tab/Window</option>
+                </select>
+                <input type="hidden" name="id" id="edit_id" value="">
             </div>
-            <form action="{{ route('menus.update_menu_item') }}" id="edit_form" method="POST">
-                <div class="modal-body">
-                    <label for="name">Title</label>
-                    <input type="text" class="form-control" id="edit_title" name="title" placeholder="Title"><br>
-                    <label for="url">URL</label>
-                    <input type="text" class="form-control" id="edit_url" name="url" placeholder="URL"><br>
-                    <label for="icon_class">Font Icon</label>
-                    <input type="text" class="form-control" id="edit_icon_class" name="icon_font"
-                            placeholder="Icon Class (optional)"><br>
-                    <label for="icon_class">Css class</label>
-                    <input type="text" class="form-control" id="edit_css_class" name="css_class"
-                            placeholder="Css Class"><br>
-                    <label for="target">Target</label>
-                    <select id="edit_target" class="form-control" name="target">
-                        <option value="_self" selected="selected">Same Tab/Window</option>
-                        <option value="_blank">New Tab/Window</option>
-                    </select>
-                    <input type="hidden" name="id" id="edit_id" value="">
-                </div>
 
-                {{ csrf_field() }}
-                {{ method_field('PUT') }}
+            {{ csrf_field() }}
+            {{ method_field('PUT') }}
 
-                <div class="modal-footer">
-                    <input type="submit" class="btn btn-success pull-right delete-confirm" value="Update">
-                    <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Cancel</button>
-                </div>
-            </form>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
+            <div class="modal-footer">
+                <input type="submit" class="btn btn-success pull-right delete-confirm" value="Update">
+                <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div><!-- /.modal-content -->
 </div><!-- /.modal -->
 
 <!-- Delete Modal -->
 <div class="modal modal-danger fade" tabindex="-1" id="delete_modal" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title"><i class="voyager-trash"></i>Bạn đồng ý xóa item này?</h4>
-            </div>
-            <div class="modal-footer">
-                <form action="{{ route('menus.delete_menu_item') }}" id="delete_form"
-                        method="POST">
-                    {{ csrf_field() }}
-                    {{ method_field('DELETE') }}
-                    <input type="submit" class="btn btn-danger pull-right delete-confirm"
-                            value="Đồng ý xóa item này">
-                </form>
-                <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Hủy</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><i class="voyager-trash"></i>Bạn đồng ý xóa item này?</h4>
+        </div>
+        <div class="modal-footer">
+            <form action="{{ route('menus.delete_menu_item') }}" id="delete_form"
+                    method="POST">
+                {{ csrf_field() }}
+                {{ method_field('DELETE') }}
+                <input type="submit" class="btn btn-danger pull-right delete-confirm"
+                        value="Đồng ý xóa item này">
+            </form>
+            <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Hủy</button>
+        </div>
+    </div><!-- /.modal-content -->
 </div><!-- /.modal -->
 @stop
 

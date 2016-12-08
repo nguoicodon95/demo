@@ -548,13 +548,17 @@ class RoomController extends BaseAdminController
 		return view('admins.host.finish', $this->data, compact('room_ID'));
 	}
 
-	public function postActiveCreate($room_ID = null) {
-		if( is_null($room_ID) ) {
-			return redirect()->route('host.kindroom');
-		}
+	public function postActiveCreate(Request $request, $room_ID) {
 		$data_Room = $this->getRoomID($room_ID);
-		$data_Room->publish = 1;
+		$data_Room->publish = $request->active;
 		$data_Room->save();
-		return redirect()->route('admin.room', $room_ID);
+		return redirect()->route('admin.room');
+	}
+
+	public function statusUpdate(Request $request, $room_ID) {
+		$data_Room = $this->getRoomID($room_ID);
+		$data_Room->status = $request->status;
+		$data_Room->save();
+		return redirect()->route('admin.room');
 	}
 }

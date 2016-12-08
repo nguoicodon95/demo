@@ -9,7 +9,7 @@
                                 <div class="kind">
                                     <textarea autofocus="true"
                                             class="input input-block input-jumbo lys-summary-form__texterea"
-                                            id="description" name="description">{{  $template or '' }}</textarea>
+                                            id="description" name="description">{{ ($data_Room != '') ? $data_Room->description : '' }}</textarea>
                                     <strong>
                                         <span class="lys-input__remaining-char-count text-muted text-small">500</span>
                                     </strong>
@@ -25,7 +25,8 @@
                                             <div class="space-5 amenity-item">
                                                 <input id="amenities-for-{{ $am_space->id }}" type="checkbox" 
                                                     class="" value="{{ $am_space->id }}" 
-                                                    name="amenities_id[]">
+                                                    name="amenities_id[]"
+                                                    {{ $data_Room != '' && $data_Room->amenities->contains($am_space->id) ? 'checked=checked' : '' }}>
                                                 <div class="pull-right col-sm-11">
                                                     <label for="amenities-for-{{ $am_space->id }}">
                                                         <span class="text-muted">{{ $am_space->name }}</span>

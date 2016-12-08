@@ -71,7 +71,7 @@ class ClientController extends BaseClientController
 
         if($request->ajax()) {
             $filter = $request->all();
-            $listings = $this->rooms->with('place_room', 'kind', 'photo_room', 'room_setting');
+            $listings = $this->rooms->with('place_room', 'kind', 'photo_room', 'room_setting')->where('publish', 1);
             /* Filter bedrooms */
             if( isset($filter['bedrooms']) && $filter['bedrooms'] > 0 ) {
                 $listings = $listings->where('bedroom_count', $filter['bedrooms']);
@@ -150,61 +150,24 @@ class ClientController extends BaseClientController
             ];
             return response()->json($data);
         }
-
+        $this->data['featured'] = $this->__getFeature();
         return view('defaults.rooms', $this->data);
     }
 
-    //Json room all
-   /* public function roomMaker( Request $request ) {
-        $listings = $this->rooms->with('place_room', 'kind', 'photo_room', 'room_setting')->orderBy('id', 'desc')->get();
-    	$this->data['listings'] = $listings;
-        $makers = array();
-        $i = 0;
-    	foreach ($this->data['listings'] as $listing) {
-        	$i++;
-			$photos = $listing->photo_room->pluck('name')->toArray();
-           
-    		$makers[] = [
-                "id" => $i,
-                "type" => $listing->kind->name,
-                "type_icon" =>  $listing->kind->icon,
-                "title" => $listing->title,
-                "location" => $listing->place_room->state.', '.$listing->place_room->city,
-                "latitude" => $listing->place_room->latitude,
-                "longitude" => $listing->place_room->longitude,
-                "url" => route('room.detail', $listing->id),
-                "rating" => 4,
-                "gallery" => $photos,
-                "features" => [
-                    "Outdoor Kitchen",
-                    "Sauna",
-                    "Trees and Landscaping"
-                ],
-                "date_created" => "2014-11-03",
-                "price" => _formatPrice($listing->room_setting->base_price),
-                "featured" => 0,
-                "color" => "",
-                "person_id" => 1,
-                "year" => 1980,
-                "special_offer" => 0,
-                "guest" => $listing->count_guest,
-                "description" => $listing->description,
-                "last_review" => "Curabitur odio nibh, luctus non pulvinar a, ultricies ac diam. Donec neque massa, viverra interdum eros ut, imperdiet",
-                "last_review_rating" => 5
-			];
-    	}
-    	$data = [
-    		'data' => $makers
-    	];
-    	return response()->json($data);
-    }*/
+    /* Lấy các phòng nổi bật */
 
-    /* Filter */
-
-    public function __filterFeature( Request $request ) {
-
-
-
+    public function __getFeature() {
+        $rooms = Room::select('id',
+                            'title',
+                            'kind_room_id',
+                            'count_guest',
+                            'description')
+                    ->with('place_room', 'kind', 'photo_room', 'room_setting')
+                    ->where('publish', 1)
+                    ->where('status', 1)
+                    ->take(4)
+                    ->get();
+        return $rooms;
     }
 
     //single room detail

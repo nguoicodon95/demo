@@ -277,5 +277,21 @@
         var text_remaining = text_max - text_length;
         $('.lys-input__remaining-char-count').html(text_remaining);
     }
+   /* $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $('.remove-image').click(function (e) {
+        e.preventDefault();
+        var id = $(this).attr('id-pt');
+        $.ajax({
+            method: 'DELETE',
+            url: "/admin/become-a-host/photo/"+id,
+            success: function () {
+                return true
+            }
+        })
+    })*/
 </script>
 @endpush

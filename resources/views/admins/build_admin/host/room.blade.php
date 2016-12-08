@@ -44,7 +44,7 @@
                     </div>
                     <div class="portlet-body">
                          @if($listings->count() > 0)
-                            @foreach($listings->where('status', 0) as $listing)
+                            @foreach($listings->where('publish', 0) as $listing)
                             <?php
                                 $step_1 = $listing->process->step_one;
                                 $step_2 = $listing->process->step_two;
@@ -80,21 +80,6 @@
                                                 <div class="clearfix"></div>
                                             </div>
                                             <div class="preview">
-                                                <div style="float: left; margin-right: 15px">
-                                                    @if($listing->status == 1)
-                                                    <i class="fa fa-circle text-info"></i> 
-                                                    @else
-                                                    <i class="fa fa-circle text-danger"></i>
-                                                    @endif
-                                                    <!-- <i class="fa fa-circle text-warning"></i>  -->
-                                                    <select name="" class="form-control" style="height: 36px; margin: 0">
-                                                        <option value="1" {{ $listing->status == 1 ? 'selected' : '' }}>Listed</option>
-                                                        <option value="0" {{ $listing->status == 0 ? 'selected' : '' }}>Unlisted</option>
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <a href="" class="btn btn-default">Preview</a>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="clearfix"></div>
@@ -140,7 +125,10 @@
                                         Địa chỉ
                                     </th>
                                     <th>
-                                        Status
+                                        Hiển thị
+                                    </th>
+                                    <th>
+                                        Là nổi bật
                                     </th>
                                     <th>
                                         Action
@@ -166,15 +154,43 @@
                                         <td>{{ $listing->title }}</td>
                                         </td>
                                         <td>{{ $listing->place_room->city .', '. $listing->place_room->country }}</td>
-                                        <td> {!! $listing->status == 1 ? '<span class="pb">Đang hiển thị</span>' : '<span class="unpb">Chưa hiển thị</span>' !!}</td>
                                         <td>
-                                            <a href="{{ route('admin.room.create', $listing->id) }}" class="btn btn-sm btn-primary edit">
-                                                <i class="fa fa-pencil"></i> Edit
+                                            <form action="{{ route('host.active', $listing->id) }}" method="post">
+                                                {{ csrf_field() }}
+                                                {{ method_field('PUT') }}
+                                                <select name="active" class={{ $listing->publish == 1 ? "pb" : "unpb" }}>
+                                                    <option value="1" {{ $listing->publish == 1 ? 'selected' : '' }}>Hiển thị</option>
+                                                    <option value="0" {{ $listing->publish == 0 ? 'selected' : '' }}>Không hiển thị</option>
+                                                </select>
+                                            </form>
+                                        </td>
+                                        <td class="text-center">
+                                            <form action="{{ route('host.status', $listing->id) }}" class="status-update" method="post">
+                                                {{ csrf_field() }}
+                                                {{ method_field('PUT') }}
+                                                @if($listing->status == 1)
+                                                    <input type="hidden" value=0 name="status">
+                                                    <button class="btn-hidden">
+                                                        <img src="/admins/assets/img/check-mark.png" alt="Là nổi bật" width=50>
+                                                    </button>
+                                                @else
+                                                    <input type="hidden" value=1 name="status">
+                                                    <button class="btn-hidden">
+                                                        <span>-</span>
+                                                    </button>
+                                                @endif
+                                            </form>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{{ route('admin.room.create', $listing->id) }}" class="btn btn-circle btn-sm btn-default edit">
+                                                <i class="fa fa-pencil"></i>
                                             </a>
                                             <form style="display: -webkit-inline-box;" action="{{ route('admin.room.delete', $listing->id) }}" id="delete_form" method="POST">
                                                 {{ csrf_field() }}
                                                 {{ method_field('DELETE') }}
-                                                <button onclick="return confirm('Bạn muốn xóa listing này?')" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Delete</button>
+                                                <button onclick="return confirm('Bạn muốn xóa listing này?')" class="btn btn-circle btn-sm btn-default delete">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
                                             </form>
                                         </td>
                                     </tr>
@@ -211,17 +227,24 @@
             border-radius: 3px;
             color: #fff;
         }
-
         .pb {
-            border-color: #034003;
-            background: rgba(43, 193, 43, 0.88);
+            border-color: #9cdb34;
+            background: rgb(111, 190, 0);
         }
-
         .unpb {
-            border-color: red;
-            background: #ff3e3e;
+            background-color: #d9534f;
+            border-color: #d43f3a;
         }
-
+        .btn-hidden {
+            background: transparent;
+            border: 0;
+        }
+        .edit {
+            color: blue;
+        }
+        .delete {
+            color: red;
+        }
     </style>
 @endpush
 
@@ -246,6 +269,33 @@
 <script>
 jQuery(document).ready(function() {    
   	TableAdvanced.init();
+    
+    $('select[name=active]').change(function () {
+        var form = $(this).parent();
+        var url = form.attr('action');
+        $.ajax({
+            method: 'post',
+            url: url,
+            data: form.serializeArray(),
+            success: function () {
+                location.reload();
+            }
+        })
+    })
+
+    $('.status-update').submit(function(e) {
+        e.preventDefault();
+        var frmData = $(this).serializeArray();
+        var url = $(this).attr('action');
+        $.ajax({
+            method: 'post',
+            url: url,
+            data: frmData,
+            success: function () {
+                location.reload();
+            }
+        }) 
+    })
 });
 
 </script>

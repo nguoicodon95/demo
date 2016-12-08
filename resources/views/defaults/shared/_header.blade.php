@@ -39,7 +39,7 @@
                         <div class="list-item">
                             <div class="item">
                                 <a href="#">Trợ giúp</a>
-                                <div class="block-box panel field-guide">
+                                <!--div class="block-box panel field-guide">
                                     <div class="search-container">
                                         <div class="search-input-inner">
                                             <div class="icon-middle-col">
@@ -109,7 +109,7 @@
                                             <span>Trung tâm trợ giúp</span>
                                         </a>
                                     </div>
-                                </div>
+                                </div-->
                             </div>
                             <!--div class="item">
                                 <a href="#" data-toggle="modal" data-target="#loginModal">Đăng nhập</a>

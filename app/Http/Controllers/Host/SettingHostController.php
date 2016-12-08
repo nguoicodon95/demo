@@ -70,6 +70,7 @@ class SettingHostController extends BaseAdminController
 		$data_Room->amenities()->attach($request->amenities_id);
 		
 		if($request->photo) {
+			Photo_room::where('room_id', $room_ID)->delete();
 			foreach($request->photo as $photo) {
 				if($photo != '') {
 					Photo_room::create([
@@ -85,5 +86,10 @@ class SettingHostController extends BaseAdminController
 		
 		return redirect()->route('admin.room.create', $room_ID);
 	}
+/*
+	public function removePhoto($id) {
+		$photo = Photo_room::find($id);
+		return $photo->delete();
+	}*/
 
 }

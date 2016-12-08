@@ -21,7 +21,7 @@
                 </li>
             </ul>
             <question link="{{ route('host.booking', $data_Room->id) }}" 
-                    back="{{ route('host.occupancy', $data_Room->id) }}"></question>
+                    back=""></question>
         </div>
 
         <template id="experience-question">

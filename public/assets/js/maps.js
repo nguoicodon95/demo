@@ -27,8 +27,8 @@ function createHomepageGoogleMap(_latitude, _longitude, json) {
     function gMap() {
         var mapCenter = new google.maps.LatLng(_latitude, _longitude);
         var mapOptions = {
-            zoom: 14,
-            minZoom: 2,
+            zoom: 13,
+            minZoom: 7,
             center: mapCenter,
             disableDefaultUI: false,
             scrollwheel: false,
@@ -177,10 +177,10 @@ function createHomepageGoogleMap(_latitude, _longitude, json) {
             width: 34
         }];
 
-        var markerCluster = new MarkerClusterer(map, newMarkers, { styles: clusterStyles, maxZoom: 19, minZoom: 2 });
-        markerCluster.onClick = function(clickedClusterIcon, sameLatitude, sameLongitude) {
-            return multiChoice(sameLatitude, sameLongitude, json);
-        };
+        /* var markerCluster = new MarkerClusterer(map, newMarkers, { styles: clusterStyles, maxZoom: 19, minZoom: 2 });
+         markerCluster.onClick = function(clickedClusterIcon, sameLatitude, sameLongitude) {
+             return multiChoice(sameLatitude, sameLongitude, json);
+         };*/
 
         // Dynamic loading markers and data from JSON ----------------------------------------------------------------------
 
@@ -195,7 +195,7 @@ function createHomepageGoogleMap(_latitude, _longitude, json) {
                                 if (!visibleArray[i].content.className) {
                                     visibleArray[i].setMap(map);
                                     visibleArray[i].content.className += 'bounce-animation marker-loaded';
-                                    markerCluster.repaint();
+                                    // markerCluster.repaint();
                                 }
                             }
                         }, i * 50);
@@ -725,7 +725,7 @@ function geocodeAddress(geocoder, resultsMap) {
             // window.history.replaceState("", "", '?lat=' + latitude + '&lng=' + longitude);
         } else {
             if (resultsMap != '')
-                resultsMap.setZoom(2)
+                resultsMap.setZoom(4)
         }
     });
 }

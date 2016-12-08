@@ -43,6 +43,13 @@
 		var base_url = '{{ url('/') }}';
 		window.Laravel = <?= json_encode(['csrfToken' => csrf_token(),]); ?>
 	</script>
+	<style>
+		span.logo-default {
+			line-height: 70px;
+			font-size: 1.7em;
+			text-transform: uppercase;
+		}
+	</style>
 </head>
 <body class="page-header-fixed page-sidebar-closed-hide-logo page-sidebar-closed-hide-logo">
 

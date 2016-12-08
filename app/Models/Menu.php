@@ -76,16 +76,73 @@ class Menu extends Model
     public static function buildBootstrapOutput($menuItems, $output, $options, Request $request)
     {
         if (empty($output)) {
-            $output = '<ul class="nav navbar-nav">';
+            $output = '<ul>';
         } else {
             $output .= '<ul class="dropdown-menu">';
         }
 
         foreach ($menuItems as $item) {
+            $data_title = $item->title;
+            if (!$data_title || $data_title == '' || trim($data_title, '') == '') {
+                switch ($item->type) {
+                    case 'category':{
+                            $category = $item->category;
+                            if ($category) {
+                                $data_title = $category->title;
+                            }
+                        }
+                        break;
+                    
+                    case 'page':{
+                            $post = $item->page;
+                            if ($post) {
+                                $data_title = $post->title;
+                            }
+                        }
+                        break;
+                    default:{
+                            $post = $item->page;
+                            if ($post) {
+                                $data_title = $post->title;
+                            }
+                        }
+                        break;
+                }
+            }
+            $data_title = htmlentities($data_title);
+
             $li_class = '';
             $a_attrs = '';
             if ($request->is(ltrim($item->url, '/')) || $item->url == '/' && $request->is('/')) {
                 $li_class = ' class="active"';
+            }
+
+             $data_url = $item->url;
+            if (!$data_url || $data_url == '' || trim($data_url, '') == '') {
+                switch ($item->type) {
+                    case 'category':{
+                            $category = $item->category;
+                            if ($category) {
+                                $data_url = route('client.read', $category ->slug);
+                            }
+                        }
+                        break;
+                    
+                    case 'page':{
+                            $post = $item->page;
+                            if ($post) {
+                                $data_url = route('client.read', $post ->slug);
+                            }
+                        }
+                        break;
+                    default:{
+                            $post = $item->page;
+                            if ($post) {
+                                $data_url = route('client.read', $post ->slug);
+                            }
+                        }
+                        break;
+                }
             }
 
             $children_menu_items = MenuNode::where('parent_id', '=', $item->id)->orderBy('order', 'ASC')->get();
@@ -109,7 +166,7 @@ class Menu extends Model
             if (isset($options->background) && $options->background == true) {
                 $styles = ' style="background-color:'.$item->color.'"';
             }
-            $output .= '<li'.$li_class.'><a '.$a_attrs.' href="'.$item->url.'" target="'.$item->target.'"'.$styles.'>'.$icon.'<span>'.$item->title.'</span></a>';
+            $output .= '<li'.$li_class.'><a '.$a_attrs.' href="'.$data_url.'" target="'.$item->target.'"'.$styles.'>'.$icon.'<span>'.$data_title.'</span></a>';
 
             if (count($children_menu_items) > 0) {
                 $output = self::buildBootstrapOutput($children_menu_items, $output, $options, $request);
@@ -262,12 +319,40 @@ class Menu extends Model
         $output .= '<ol class="dd-list">';
 
         foreach ($menuItems as $item) {
+            $data_title = $item->title;
+            if (!$data_title || $data_title == '' || trim($data_title, '') == '') {
+                switch ($item->type) {
+                    case 'category':{
+                            $category = $item->category;
+                            if ($category) {
+                                $data_title = $category->title;
+                            }
+                        }
+                        break;
+                    
+                    case 'page':{
+                            $post = $item->page;
+                            if ($post) {
+                                $data_title = $post->title;
+                            }
+                        }
+                        break;
+                    default:{
+                            $post = $item->page;
+                            if ($post) {
+                                $data_title = $post->title;
+                            }
+                        }
+                        break;
+                }
+            }
+            $data_title = htmlentities($data_title);
             $output .= '<li class="dd-item" data-id="'.$item->id.'">';
             $output .= '<div class="pull-right item_actions">';
             $output .= '<div class="btn-sm btn-danger pull-right delete" data-id="'.$item->id.'"><i class="voyager-trash"></i> Delete</div>';
             $output .= '<div class="btn-sm btn-primary pull-right edit" data-id="'.$item->id.'" data-title="'.$item->title.'" data-url="'.$item->url.'" data-target="'.$item->target.'" data-icon_class="'.$item->icon_font.'" data-css_class="'.$item->css_class.'"><i class="voyager-edit"></i> Edit</div>';
             $output .= '</div>';
-            $output .= '<div class="dd-handle">'.$item->title.' <small class="url">'.$item->url.'</small></div>';
+            $output .= '<div class="dd-handle">'.$data_title.' <small class="url">'.$item->url.'</small></div>';
 
             $children_menu_items = MenuNode::where('parent_id', '=', $item->id)->orderBy('order', 'ASC')->get();
 

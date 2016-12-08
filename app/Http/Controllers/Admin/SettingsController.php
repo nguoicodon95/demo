@@ -22,7 +22,7 @@ class SettingsController extends BaseAdminController
 		    	$this->data['rows'] = Location::all();
 		    	$this->data['form'] = 'locations';
     		} elseif($get == 'host') {
-		    	$this->data['rows'] = Room::all();
+		    	$this->data['rows'] = Room::where('publish', 1)->get();
 		    	$this->data['form'] = 'host';
     		}
     	} else {
@@ -31,14 +31,14 @@ class SettingsController extends BaseAdminController
     	}
 
     	$rooms = Interfaces::with('room.photo_room')->where('room_id', '!=', '')->get()->toArray();
-    	$rooms_items = $locations_items = array();
+		$rooms_items = $locations_items = array();
 		foreach ($rooms as $r) {
 			$rooms_items[] = [
 				'key' => $r['id'],
 				'id' => $r['room_id'],
 				'position' => $r['position'],
 				'name' => $r['room']['title'],
-				'image' => $r['room']['photo_room'][0]['name'],
+				'image' => !empty($r['room']['photo_room']) ? $r['room']['photo_room'][0]['name'] : '',
 				'config' => $r['config'],
 			];
 		}
