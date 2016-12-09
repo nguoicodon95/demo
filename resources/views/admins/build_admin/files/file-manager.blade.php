@@ -1,3 +1,4 @@
+<?php $filemanager = true; ?>
 @extends('admins.build_admin._master')
 @section('titleName', 'Files marnager')
 @section('content')

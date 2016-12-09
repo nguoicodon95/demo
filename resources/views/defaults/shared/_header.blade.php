@@ -5,8 +5,8 @@
                 <div class="container-rooms-header">
                     <div class="logo pull-left">
                         <h1>
-                            <a href="/" title="Cho thuê nhà nghỉ, ngôi nhà, căn hộ & Phòng cho Thuê - Airbnb">
-                                <img src="/assets/img/logo.png" alt="logo">
+                            <a href="/" title="{{ $siteSettings['title'] }}">
+                                <img src="{{ $siteSettings['logo'] }}" alt="logo">
                             </a>
                         </h1>
                     </div>

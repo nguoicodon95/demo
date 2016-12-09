@@ -72,6 +72,17 @@ Route::group(['prefix' => 'admin'], function () {
 		Route::post('menu/order', 'Admin\MenuController@order_item')->name('menus.order_item');
 		Route::post('menu/add-related', 'Admin\MenuController@addRelated')->name('menus.related');
 
+
+		/*Setting gernerate*/
+		Route::get('settings', 'Admin\SettingsController@index')->name('web.settings');
+		Route::post('settings', 'Admin\SettingsController@save');
+		Route::post('settings/create', 'Admin\SettingsController@create')->name('web.settings.create');
+		Route::delete('settings/{id}', 'Admin\SettingsController@delete')->name('web.settings.delete');
+		Route::get('settings/move_up/{id}', 'Admin\SettingsController@move_up')->name('web.settings.move_up');
+		Route::get('settings/move_down/{id}', 'Admin\SettingsController@move_down')->name('web.settings.move_down');
+		Route::get('settings/delete_value/{id}', 'Admin\SettingsController@delete_value')->name('web.settings.delete_value');
+
+
 		/*FILE*/
 
 		Route::any('files/connector', 'Admin\FileController@anyConnector')->name('file.connect');

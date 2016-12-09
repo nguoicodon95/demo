@@ -52,22 +52,24 @@
 	</style>
 </head>
 <body class="page-header-fixed page-sidebar-closed-hide-logo page-sidebar-closed-hide-logo">
+	@if(!isset($filemanager))
+		@include('admins.build_admin._shared._header')
 
-	@include('admins.build_admin._shared._header')
+		<div class="clearfix"></div>
 
-	<div class="clearfix"></div>
-
-	<div class="page-container">
-		@include('admins.build_admin._shared._sidebar')
-		<div class="page-content-wrapper">
-			@yield('content')
+		<div class="page-container">
+			@include('admins.build_admin._shared._sidebar')
+			<div class="page-content-wrapper">
+				@yield('content')
+			</div>
 		</div>
-	</div>
 
-	@include('admins.build_admin._shared._footer')
+		@include('admins.build_admin._shared._footer')
 
-	@include('admins.build_admin._shared._modal')
-
+		@include('admins.build_admin._shared._modal')
+	@else
+		@yield('content')
+	@endif
 	<!--[if lt IE 9]>
 	<script src="/admins/assets/root/plugins/respond.min.js"></script>
 	<script src="/admins/assets/root/plugins/excanvas.min.js"></script> 

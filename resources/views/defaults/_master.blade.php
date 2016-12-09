@@ -20,8 +20,6 @@
 </head>
 
 <body onunload="" class="{{ $class_body or '' }}page-homepage" id="page-top">
-
-<!-- Outer Wrapper-->
 <div id="outer-wrapper">
     <!-- Inner Wrapper -->
     <div id="inner-wrapper">
